@@ -88,6 +88,23 @@ contract CredibilityScore {
         financialData.personalInformation = personalInformation;
     }
 
+    function addEmploymentInformation(
+        string memory panNumber,
+        EmploymentInformation memory employmentInformation
+    ) public {
+        FinancialData storage financialData = financialDataMap[panNumber];
+        financialData.employmentInformation.push(employmentInformation);
+    }
+
+    function addLoanRepaymentHistory(
+        string memory panNumber,
+        LoanRepaymentHistory memory loanRepaymentHistory
+    ) public {
+        FinancialData storage financialData = financialDataMap[panNumber];
+        financialData.creditHistory.loanRepaymentHistory.push(
+            loanRepaymentHistory
+        );
+    }
 
     function getFinancialData(
         string memory panNumber
