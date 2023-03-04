@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Paper } from "@mui/material";
+import { Typography, Button, Paper, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@arcana/auth-react";
 import { collection, getDocs } from "firebase/firestore";
@@ -61,7 +61,7 @@ const Dashboard = () => {
   let auth = useAuth();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState();
-  const [kyc, setKyc] = useState(false);
+  const [kyc, setKyc] = useState();
   useEffect(() => {
     if (!auth.user) return;
     const getProperties = async () => {
@@ -91,8 +91,13 @@ const Dashboard = () => {
     }
   }, [data]);
   console.log(kyc);
-  if (!kyc) {
+  if (kyc === false) {
     return <div className="w-screen h-screen flex justify-center items-center text-2xl bg font-bold">KYC under process</div>;
+  }
+  else if(kyc === undefined){
+    return <div className="w-screen h-screen flex justify-center items-center text-2xl bg font-bold">
+      <CircularProgress />
+    </div>;
   }
   return (
     <>

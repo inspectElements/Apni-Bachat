@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -8,25 +8,29 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import DoneIcon from "@mui/icons-material/Done";
+import { useAuth } from "@arcana/auth-react";
+import { storage, db } from "../../configs/firebase";
+import { addDoc, collection } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import uuid from "react-uuid";
 
 function calculateEMI(principal, interestRate, loanPeriod) {
   // Convert interest rate from percentage to decimal
   interestRate = interestRate / 100 / 12;
 
   // Calculate monthly payment (EMI)
-  const numerator = principal * interestRate * Math.pow(1 + interestRate, loanPeriod);
+  const numerator =
+    principal * interestRate * Math.pow(1 + interestRate, loanPeriod);
   const denominator = Math.pow(1 + interestRate, loanPeriod) - 1;
   const monthlyPayment = (numerator / denominator).toFixed(2);
 
   return monthlyPayment;
 }
 
-
 const Card = (props) => {
-  const navigate = useNavigate();
   return (
     <>
       <Paper
@@ -67,8 +71,51 @@ const Card = (props) => {
 
 const LoanApply = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
+  const [loading, setLoading] = React.useState(false);
+  const [principal, setPrincipal] = React.useState(0);
+  const [interestRate, setInterestRate] = React.useState(0);
+  const [loanPeriod, setLoanPeriod] = React.useState(0);
+  const [monthlyPayment, setMonthlyPayment] = React.useState();
+  const [collatralImg, setCollatralImg] = React.useState(null);
+  useEffect(() => {
+    if (principal && interestRate && loanPeriod)
+      setMonthlyPayment(
+        parseFloat(
+          calculateEMI(
+            parseFloat(principal),
+            parseFloat(interestRate),
+            parseFloat(loanPeriod)
+          )
+        )
+      );
+  }, [principal, interestRate, loanPeriod]);
+  const applyLoan = async () => {
+    if (auth.user && collatralImg) {
+      setLoading(true);
+      const storageRef = ref(storage, `collateral/${uuid()}`);
+      let storageSnap = await uploadBytes(storageRef, collatralImg);
+      const url = await getDownloadURL(storageSnap.ref);
+      const loan = {
+        principal,
+        interestRate,
+        loanPeriod,
+        monthlyPayment,
+        collateral: url,
+        approved: false,
+        borrower: auth.user.address,
+      };
+      const docRef = await addDoc(collection(db, "loans"), loan);
+      setLoading(false);
+    }
+  };
   return (
     <>
+      {loading && (
+        <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
+          <CircularProgress />
+        </div>
+      )}
       <div className="bg min-h-[100vh]">
         <div className="pt-20 pb-14">
           <div className="absolute inset-0 mt-5 ml-5">
@@ -105,17 +152,21 @@ const LoanApply = () => {
           </p>
         </div>
         <div className="flex flex-col gap-5 justify-center items-center">
-          <Card title="Loan at ">
+          <Card title={`Loan at ${interestRate}%`}>
             <TextField
               label="Amount"
               variant="outlined"
               sx={{ width: "95%", marginTop: "2rem" }}
+              onChange={(e) => setPrincipal(e.target.value)}
+              type="number"
             />
             <TextField
               label="Time Period"
               placeholder="in months"
               variant="outlined"
               sx={{ width: "95%", marginTop: "2rem", marginBottom: "1rem" }}
+              onChange={(e) => setLoanPeriod(e.target.value)}
+              type="number"
             />
             <FormControl sx={{ width: "95%", marginY: "1rem" }}>
               <InputLabel id="outputType-label">Loan Type</InputLabel>
@@ -123,12 +174,13 @@ const LoanApply = () => {
                 labelId="outputType-label"
                 id="outputType"
                 label="Loan Type"
+                onChange={(e) => setInterestRate(e.target.value)}
               >
-                <MenuItem value="9">Home Loans</MenuItem>
-                <MenuItem value="12">Personal Loans</MenuItem>
-                <MenuItem value="7">Car Loans</MenuItem>
-                <MenuItem value="5">Education Loans</MenuItem>
-                <MenuItem value="14">Business Loans</MenuItem>
+                <MenuItem value={9}>Home Loans</MenuItem>
+                <MenuItem value={12}>Personal Loans</MenuItem>
+                <MenuItem value={7}>Car Loans</MenuItem>
+                <MenuItem value={5}>Education Loans</MenuItem>
+                <MenuItem value={14}>Business Loans</MenuItem>
               </Select>
             </FormControl>
             <TextField
@@ -136,11 +188,13 @@ const LoanApply = () => {
               placeholder="Estimated Monthly EMI"
               variant="outlined"
               disabled
+              value={monthlyPayment}
               sx={{
                 "& .MuiInputBase-input.Mui-disabled": {
                   WebkitTextFillColor: "#001220",
                 },
-                width: "95%", margin: "1rem"
+                width: "95%",
+                margin: "1rem",
               }}
             />
             <label
@@ -167,6 +221,7 @@ const LoanApply = () => {
               id="income"
               multiple
               type="file"
+              onChange={(e) => setCollatralImg(e.target.files[0])}
             />
             <Button
               variant="contained"
@@ -185,9 +240,9 @@ const LoanApply = () => {
                 textTransform: "none",
                 marginTop: "1rem",
               }}
-              onClick={() => navigate(`/dashboard/loan`)}
+              onClick={() => applyLoan()}
             >
-              Deposit
+              Apply
             </Button>
           </Card>
         </div>

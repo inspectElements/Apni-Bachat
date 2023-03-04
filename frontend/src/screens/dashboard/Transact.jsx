@@ -3,9 +3,7 @@ import { Typography, TextField, Paper, Button, CircularProgress } from "@mui/mat
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
-  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../configs/firebase";
