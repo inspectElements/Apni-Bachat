@@ -67,12 +67,12 @@ const CreateAccount = () => {
   };
   return (
     <>
-      {loading && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
-          <CircularProgress />
-        </div>
-      )}
-      <div className="bg"></div>
+    {loading &&
+      <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
+        <CircularProgress/>
+      </div>
+    }
+    <div className="bg">
       <div className="p-14">
         <Typography
           variant="h4"
@@ -245,19 +245,30 @@ const CreateAccount = () => {
           onChange={(e) => setSignatureImg(e.target.files)}
         />
       </div>
-      <div className="flex flex-col justify-center items-center m-20">
+      <div className="flex flex-col justify-center items-center p-20">
         <Button
           variant="contained"
           sx={{
-            width: "85vw",
-            backgroundColor: "#3b82f680",
-            height: "50px",
+            disableRipple: true,
+                width: "85vw",
+                background:
+                  "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                height: "50px",
+                color: "#000",
+                border: "2px solid #000",
+                borderRadius: "10px",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                textTransform: "none",
+                marginTop: "1rem",
           }}
           onClick={() => create()}
         >
           Complete
         </Button>
       </div>
+    </div>
     </>
   );
 };

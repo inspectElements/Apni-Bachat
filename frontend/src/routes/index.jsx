@@ -9,6 +9,7 @@ import Transact from "../screens/dashboard/Transact";
 import Transfer from "../screens/dashboard/Transfer";
 import Loan from "../screens/dashboard/Loan";
 import LoanApply from "../screens/dashboard/LoanApply";
+import LoanStatus from "../screens/dashboard/LoanStatus";
 import LoanRepay from "../screens/dashboard/LoanRepay";
 import Trade from "../screens/dashboard/Trade";
 import ApproveLoan from "../screens/admin/Loan";
@@ -54,6 +55,10 @@ export const routes = createBrowserRouter([
   {
     path: "/dashboard/loan/apply",
     element: <LoanApply />,
+  },
+  {
+    path: "/dashboard/loan/status",
+    element: <LoanStatus />,
   },
   {
     path: "/dashboard/loan/repay",

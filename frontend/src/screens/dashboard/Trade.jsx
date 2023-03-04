@@ -89,7 +89,7 @@ const Trade = () => {
           }}
         />
       </div>
-      <div className="flex flex-col justify-center items-center p-20">
+      <div className="flex flex-col justify-center items-center p-10">
         <Button
           variant="contained"
           sx={{
