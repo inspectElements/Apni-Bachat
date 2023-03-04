@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -8,12 +8,40 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DoneIcon from "@mui/icons-material/Done";
+import { useAuth } from "@arcana/auth-react";
+import { db } from "../../configs/firebase";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 
 const Card = (props) => {
   const navigate = useNavigate();
+  const pay = async () => {
+    if(!props.data.loan[parseInt(props.title) - 1].periodRemaining){
+      props.data.loan[parseInt(props.title) - 1]["periodRemaining"] = parseInt(props.data.loan[parseInt(props.title) - 1].loanPeriod)-1;
+    }
+    else{
+      props.data.loan[parseInt(props.title) - 1].periodRemaining -= 1;
+    }
+    if (!props.data.loan[parseInt(props.title) - 1].amountPaid) {
+      props.data.loan[parseInt(props.title) - 1]["amountPaid"] = parseFloat(
+        props.amount
+      );
+    } else {
+      props.data.loan[parseInt(props.title) - 1].amountPaid += parseFloat(
+        props.amount
+      );
+    }
+    if (props.data.loan[parseInt(props.title) - 1].periodRemaining === 0) {
+      props.data.loan[parseInt(props.title) - 1].status = 'paid';
+    }
+    await updateDoc(doc(db, "user", props.data.id), {
+      loan: props.data.loan,
+    });
+    navigate(0);
+  };
   return (
     <>
       <Paper
@@ -31,53 +59,53 @@ const Card = (props) => {
       >
         <div className="flex justify-between items-center">
           <div className="flex flex-col justify-center items-start">
-          <Typography
-            variant="h4"
-            component="h2"
-            color="black"
-            sx={{
-              fontSize: "1.5rem",
-              fontWeight: "bold",
-              color: "black",
-              textAlign: "center",
-              fontFamily: "Poppins, sans-serif",
-            }}
-          >
-            {props.title}
-          </Typography>
-          <Typography
-            variant="h4"
-            component="h2"
-            color="black"
-            sx={{
-              fontSize: "1.25rem",
-              color: "black",
-              textAlign: "center",
-              fontFamily: "Poppins, sans-serif",
-            }}
-          >
-            {props.due}
-          </Typography>
+            <Typography
+              variant="h4"
+              component="h2"
+              color="black"
+              sx={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "black",
+                textAlign: "center",
+                fontFamily: "Poppins, sans-serif",
+              }}
+            >
+              id: {props.title}
+            </Typography>
+            <Typography
+              variant="h4"
+              component="h2"
+              color="black"
+              sx={{
+                fontSize: "1.25rem",
+                color: "black",
+                textAlign: "center",
+                fontFamily: "Poppins, sans-serif",
+              }}
+            >
+              due for: {props.due}
+            </Typography>
           </div>
           <Button
-              variant="contained"
-              sx={{
-                disableRipple: true,
-                width: "auto",
-                background:
-                  "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
-                color: "#000",
-                border: "2px solid #000",
-                borderRadius: "10px",
-                fontFamily: "Poppins, sans-serif",
-                fontWeight: "bold",
-                fontSize: "1.2rem",
-                textTransform: "none",
-              }}
-              onClick={() => navigate(`/dashboard/loan`)}
-            >
-              {props.amount}
-            </Button>
+            variant="contained"
+            sx={{
+              disableRipple: true,
+              width: "auto",
+              background:
+                "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+              color: "#000",
+              border: "2px solid #000",
+              borderRadius: "10px",
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: "bold",
+              fontSize: "1.2rem",
+              textTransform: "none",
+            }}
+            onClick={() => pay()}
+          >
+            {props.amount}
+          </Button>
         </div>
       </Paper>
     </>
@@ -86,8 +114,35 @@ const Card = (props) => {
 
 const LoanRepay = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
+  const [loading, setLoading] = React.useState(false);
+  const [data, setData] = React.useState([]);
+  useEffect(() => {
+    if (!auth) return;
+    if (auth.user) {
+      setLoading(true);
+      getDocs(collection(db, "user")).then((querySnapshot) => {
+        let r = {};
+        querySnapshot.forEach((doc) => {
+          if (doc.data().uid == auth.user.address)
+            r = { id: doc.id, loan: doc.data().loan };
+        });
+        setData(r);
+      });
+    }
+  }, [auth]);
+  useEffect(() => {
+    if (!auth) return;
+    if (!data) return;
+    setLoading(false);
+  }, [data]);
   return (
     <>
+      {loading && (
+        <div className="absolute inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <CircularProgress />
+        </div>
+      )}
       <div className="bg min-h-[100vh]">
         <div className="pt-20 pb-14">
           <div className="absolute inset-0 mt-5 ml-5">
@@ -124,9 +179,21 @@ const LoanRepay = () => {
           </p>
         </div>
         <div className="flex flex-col gap-5 justify-center items-center">
-          <Card title="Loan 1" due="March 23" amount="Pay 0.1M"/>
-          <Card title="Loan 2" due="March 23" amount="Pay 0.2M"/>
-          <Card title="Loan 1" due="April 23" amount="Pay 0.1M"/>
+          {data.loan &&
+            data.loan.map((item, index) => {
+              return (
+                <>
+                  {(item.status === 'approved') && (
+                    <Card
+                      title={index + 1}
+                      due={item.periodRemaining || item.loanPeriod}
+                      amount={item.monthlyPayment}
+                      data={data}
+                    />
+                  )}
+                </>
+              );
+            })}
         </div>
       </div>
     </>

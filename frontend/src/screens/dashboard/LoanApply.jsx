@@ -13,7 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@arcana/auth-react";
 import { storage, db } from "../../configs/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { collection, doc, updateDoc, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import uuid from "react-uuid";
 
@@ -96,17 +96,27 @@ const LoanApply = () => {
       const storageRef = ref(storage, `collateral/${uuid()}`);
       let storageSnap = await uploadBytes(storageRef, collatralImg);
       const url = await getDownloadURL(storageSnap.ref);
+      let docRef = await getDocs(collection(db, "user"));
+      let r = {};
+      docRef.forEach((doc) => {
+        if (doc.data().uid === auth.user.address)
+          r = { id: doc.id, loan: doc.data().loan };
+      });
       const loan = {
-        principal,
-        interestRate,
-        loanPeriod,
-        monthlyPayment,
+        principal: parseFloat(principal),
+        interestRate: parseFloat(interestRate),
+        loanPeriod: parseInt(loanPeriod),
+        monthlyPayment: parseFloat(monthlyPayment),
         collateral: url,
-        approved: false,
+        status: "applied",
         borrower: auth.user.address,
       };
-      const docRef = await addDoc(collection(db, "loans"), loan);
+      r.loan.push(loan);
+      await updateDoc(doc(db, "user", r.id), {
+        loan: r.loan,
+      });
       setLoading(false);
+      navigate("/dashboard/loan/status");
     }
   };
   return (
