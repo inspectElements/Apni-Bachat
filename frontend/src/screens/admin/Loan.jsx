@@ -93,9 +93,16 @@ function Loan() {
     const _parsedCreditScore = parseInt(creditScore._hex.substring(2), 16);
     setParsedCreditScore(_parsedCreditScore);
   };
-
   const approveOnClick = async () => {};
-
+  const getScore = (credit) => {
+    if (credit < 300) {
+      return 1;
+    } else if (credit < 700) {
+      return 2;
+    } else {
+      return 3;
+    }
+  };
   return (
     <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
       <Modal
@@ -105,10 +112,7 @@ function Loan() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <img
-            src="https://t4.ftcdn.net/jpg/03/21/80/19/360_F_321801932_i0XO5LAnSNpKnMxeF4OijfIrOEC9aEB8.jpg"
-            alt="meter"
-          />
+          <img src={`/meter${getScore(parsedCreditScore)}.png`} alt="meter" />
           {parsedCreditScore !== null && (
             <Typography
               id="modal-modal-title"
