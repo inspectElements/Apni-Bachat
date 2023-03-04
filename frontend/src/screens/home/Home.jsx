@@ -91,7 +91,7 @@ const Home = () => {
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-5 mt-10">
           <Card title="My Khata" route="dashboard" />
-          <Card title="My Score" route="route" />
+          <Card title="My Score" route="credit" />
           <Card title="Update Documents" route="update" />
         </div>
       </div>
