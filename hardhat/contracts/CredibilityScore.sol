@@ -77,7 +77,6 @@ contract CredibilityScore {
         authorized.push(_authorized);
     }
 
-
     // remaining contract
     mapping(string => FinancialData) private financialDataMap;
 
@@ -125,7 +124,6 @@ contract CredibilityScore {
             financialData.creditHistory
         );
     }
-
 
     function calculateCreditScore(
         string memory pan
@@ -183,5 +181,4 @@ contract CredibilityScore {
         // Return the final credit score
         return creditScore;
     }
-
 }

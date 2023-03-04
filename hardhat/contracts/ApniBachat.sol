@@ -75,8 +75,14 @@ contract ApniBachat {
         enrolled[panNumber] = true;
         users[panNumber] = personalInformation;
 
-        credibilityScoreContract.addPersonalInformation(panNumber, personalInformation);
-        credibilityScoreContract.addEmploymentInformation(panNumber, employmentInformation);
+        credibilityScoreContract.addPersonalInformation(
+            panNumber,
+            personalInformation
+        );
+        credibilityScoreContract.addEmploymentInformation(
+            panNumber,
+            employmentInformation
+        );
     }
 
     modifier onlyEnrolled(string memory panNumber) {
@@ -84,4 +90,64 @@ contract ApniBachat {
         _;
     }
 
+    function deposit(
+        string memory panNumber
+    ) public payable onlyEnrolled(panNumber) {
+        balance[panNumber] += msg.value;
+        totalBalance += msg.value;
+    }
+
+    function withdraw(
+        uint256 amount,
+        string memory panNumber
+    ) public onlyEnrolled(panNumber) {
+        require(balance[panNumber] >= amount, "Insufficient Balance");
+        balance[panNumber] -= amount;
+        payable(msg.sender).transfer(amount);
+    }
+
+    function requestLoan(
+        string memory panNumber,
+        Loan memory loanDeets
+    ) public onlyEnrolled(panNumber) {
+        balance[panNumber] += loanDeets.loanAmount;
+        loans[panNumber] = loanDeets;
+    }
+
+    function approveLoan(
+        string memory panNumber
+    ) public view onlyEnrolled(panNumber) returns (string memory) {
+        string memory result = "";
+
+        if (
+            minCreditScore >
+            credibilityScoreContract.calculateCreditScore(panNumber)
+        ) {
+            result = "credit criteria not satified";
+        } else {
+            result = "approved";
+        }
+
+        return result;
+    }
+
+    function makeLoanPayment(
+        string memory panNumber,
+        uint256 amount
+    ) public onlyEnrolled(panNumber) {
+        require(balance[panNumber] >= amount, "You dont have that much money");
+        require(amount > 0, "Payment should be positive");
+
+        uint256 amountWithInterest = loans[panNumber].loanAmount +
+            (loans[panNumber].loanAmount * loans[panNumber].interestRate) /
+            100;
+
+        if (amount >= amountWithInterest) {
+            amount = amountWithInterest;
+            loans[panNumber].loanAmount = 0;
+        } else {
+            loans[panNumber].loanAmount -= amount;
+        }
+        balance[panNumber] -= amount;
+    }
 }
