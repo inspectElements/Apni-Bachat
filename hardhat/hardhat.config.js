@@ -14,6 +14,6 @@ module.exports = {
     },
   },
   paths: {
-    artifacts: "../three-bank/src/artifacts",
+    artifacts: "../frontend/src/artifacts",
   },
 };
