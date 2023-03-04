@@ -16,13 +16,29 @@ import { useAuth } from "@arcana/auth-react";
 import { db } from "../../configs/firebase";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 
+// json for month number to month name
+const month = {
+  1: "January",
+  2: "February",
+  3: "March",
+  4: "April",
+  5: "May",
+  6: "June",
+  7: "July",
+  8: "August",
+  9: "September",
+  10: "October",
+  11: "November",
+  12: "December",
+};
+
 const Card = (props) => {
   const navigate = useNavigate();
   const pay = async () => {
-    if(!props.data.loan[parseInt(props.title) - 1].periodRemaining){
-      props.data.loan[parseInt(props.title) - 1]["periodRemaining"] = parseInt(props.data.loan[parseInt(props.title) - 1].loanPeriod)-1;
-    }
-    else{
+    if (!props.data.loan[parseInt(props.title) - 1].periodRemaining) {
+      props.data.loan[parseInt(props.title) - 1]["periodRemaining"] =
+        parseInt(props.data.loan[parseInt(props.title) - 1].loanPeriod) - 1;
+    } else {
       props.data.loan[parseInt(props.title) - 1].periodRemaining -= 1;
     }
     if (!props.data.loan[parseInt(props.title) - 1].amountPaid) {
@@ -35,7 +51,7 @@ const Card = (props) => {
       );
     }
     if (props.data.loan[parseInt(props.title) - 1].periodRemaining === 0) {
-      props.data.loan[parseInt(props.title) - 1].status = 'paid';
+      props.data.loan[parseInt(props.title) - 1].status = "paid";
     }
     await updateDoc(doc(db, "user", props.data.id), {
       loan: props.data.loan,
@@ -84,29 +100,29 @@ const Card = (props) => {
                 fontFamily: "Poppins, sans-serif",
               }}
             >
-              due for: {props.due}
+              due for: {month[3 + props.loanPeriod - props.due]}
             </Typography>
           </div>
-          <Button
-            variant="contained"
-            sx={{
-              disableRipple: true,
-              width: "auto",
-              background:
-                "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
-              color: "#000",
-              border: "2px solid #000",
-              borderRadius: "10px",
-              fontFamily: "Poppins, sans-serif",
-              fontWeight: "bold",
-              fontSize: "1.2rem",
-              textTransform: "none",
-            }}
-            onClick={() => pay()}
-          >
-            {props.amount}
-          </Button>
         </div>
+        <Button
+          variant="contained"
+          sx={{
+            disableRipple: true,
+            width: "auto",
+            background:
+              "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+            color: "#000",
+            border: "2px solid #000",
+            borderRadius: "10px",
+            fontFamily: "Poppins, sans-serif",
+            fontWeight: "bold",
+            fontSize: "1.2rem",
+            textTransform: "none",
+          }}
+          onClick={() => pay()}
+        >
+          {props.amount}
+        </Button>
       </Paper>
     </>
   );
@@ -183,12 +199,13 @@ const LoanRepay = () => {
             data.loan.map((item, index) => {
               return (
                 <>
-                  {(item.status === 'approved') && (
+                  {item.status === "approved" && (
                     <Card
                       title={index + 1}
-                      due={item.periodRemaining || item.loanPeriod}
+                      due={item.periodRemaining}
                       amount={item.monthlyPayment}
                       data={data}
+                      loanPeriod={item.loanPeriod}
                     />
                   )}
                 </>
