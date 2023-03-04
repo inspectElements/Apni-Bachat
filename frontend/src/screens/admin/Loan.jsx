@@ -5,7 +5,6 @@ import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 
 import { useAuth } from "@arcana/auth-react";
-import { providers, Contract } from "ethers";
 import {
   apniBachatConractAddress,
   credibilityScoreConractAddress,
@@ -15,8 +14,10 @@ import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/Cre
 import { arcanaProvider } from "../../index";
 import CustomizedDialogs from "../../components/CustomizedDialogs";
 
+import { providers, Contract, utils } from "ethers";
+
 const RequestItem = (props) => {
-  console.log(props)
+  console.log(props);
   return (
     <div className="w-[90%] bg-white shadow-lg">
       <div className="w-full flex justify-between p-5">
@@ -61,6 +62,12 @@ function Loan() {
     signer
   );
 
+  const apniBachatContract = new Contract(
+    apniBachatConractAddress,
+    ApniBachat.abi,
+    signer
+  );
+
   const [panCard, setPanCard] = useState("");
 
   const [open, setOpen] = React.useState(false);
@@ -96,7 +103,42 @@ function Loan() {
     const _parsedCreditScore = parseInt(creditScore._hex.substring(2), 16);
     setParsedCreditScore(_parsedCreditScore);
   };
-  const approveOnClick = async () => {};
+  const approveOnClick = async () => {
+    await arcanaProvider.connect();
+
+    const result = await apniBachatContract.approveLoan(panCard);
+
+    console.log(result);
+
+    if (result === "approved") {
+      let r = {};
+      await getDocs(collection(db, "user")).then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if (doc.data().uid === borrower) {
+            r["id"] = doc.id;
+            r["loan"] = [];
+            doc.data().loan.forEach((item) => {
+              console.log(item.id, id);
+              if (item.id === id) {
+                item.status = "approved";
+              }
+              r["loan"].push(item);
+            });
+          }
+        });
+      });
+      console.log(r);
+      await updateDoc(doc(db, "user", r.id), {
+        loan: r.loan,
+      }).then(() => {
+        console.log("Document successfully updated!");
+      });
+    } else {
+      // rejection modal
+    }
+
+    return;
+  };
 
   const getScore = (credit) => {
     if (credit < 300) {
