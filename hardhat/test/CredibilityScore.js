@@ -55,4 +55,29 @@ describe("CredibilityScore", function () {
     // verify address
     await credibilityScore.connect(_owner).addAuthorized(authorized.address);
   });
+
+  it("should add personal information", async () => {
+    const personalInformationJson = financialData.personalInformation;
+
+    // Add personal information
+    await credibilityScore
+      .connect(authorized)
+      .addPersonalInformation(pan, personalInformationJson);
+
+    // Retrieve the personal information from the contract
+    const financialDataFromContract = await credibilityScore
+      .connect(authorized)
+      .getFinancialData(pan);
+
+    // Verify that the information is correct
+    expect(financialDataFromContract[0][0]).to.equal(
+      personalInformationJson.name
+    );
+    expect(financialDataFromContract[0][1]).to.equal(
+      personalInformationJson.dateOfBirth
+    );
+    expect(financialDataFromContract[0][2]).to.equal(
+      personalInformationJson.panNumber
+    );
+  });
 });
