@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import './i18next';
+import "./i18next";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 
@@ -16,6 +16,8 @@ export const arcanaProvider = new AuthProvider(appID, {
   theme: "light", //defaults to dark
   alwaysVisible: true, //defaults to true which is Full UI mode
   chainConfig: {
+    // chainId: "0xAEF3", //defaults to CHAIN.ETHEREUM_MAINNET
+    // rpcUrl: "https://alfajores-forno.celo-testnet.org/", //defaults to 'https://rpc.ankr.com/eth'
     chainId: CHAIN.POLYGON_MUMBAI_TESTNET, //defaults to CHAIN.ETHEREUM_MAINNET
     rpcUrl: "https://polygon-rpc.com", //defaults to 'https://rpc.ankr.com/eth'
   },

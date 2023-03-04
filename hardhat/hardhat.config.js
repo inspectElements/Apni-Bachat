@@ -12,6 +12,10 @@ module.exports = {
       url: "https://polygon-mumbai.g.alchemy.com/v2/" + ALCHEMY_URL,
       accounts: [`0x${MATIC_PRIVATE_KEY}`],
     },
+    celo: {
+      url: "https://alfajores-forno.celo-testnet.org/",
+      accounts: [`0x${MATIC_PRIVATE_KEY}`],
+    },
   },
   paths: {
     artifacts: "../frontend/src/artifacts",

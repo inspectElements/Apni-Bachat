@@ -1,4 +1,4 @@
 export const credibilityScoreConractAddress =
-  "0xC56Dbaf70938d640a9C718Eef5BD9aA730d61Cc5";
+  "0x3B80fa2DB1D4B9fdd2DdaDb36F8C8E67dF77790d";
 export const apniBachatConractAddress =
-  "0x8d229E00544F76550D730180B658303f2A4f21c0";
+  "0x31c4f8626f9dd04Db25e629a954E3cF4541d5956";
