@@ -11,6 +11,7 @@ const financialData = {
     loanType: "Home Loan",
     loanAmount: ethers.utils.parseEther("200"),
     loanTenure: 60,
+    interestRate: 10,
     repaymentStatus: "on_time",
   },
   employmentInformation: {

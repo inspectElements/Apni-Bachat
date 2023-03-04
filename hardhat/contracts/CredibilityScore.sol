@@ -20,6 +20,7 @@ contract CredibilityScore {
         string loanType;
         uint256 loanAmount;
         uint256 loanTenure;
+        uint256 interestRate;
         string repaymentStatus;
     }
 
