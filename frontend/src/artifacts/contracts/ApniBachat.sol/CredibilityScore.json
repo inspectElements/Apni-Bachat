@@ -26,16 +26,6 @@
               "internalType": "uint256",
               "name": "incomePerYear",
               "type": "uint256"
-            },
-            {
-              "internalType": "string",
-              "name": "startTime",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "endTime",
-              "type": "string"
             }
           ],
           "internalType": "struct EmploymentInformation",
@@ -105,11 +95,6 @@
             {
               "internalType": "string",
               "name": "dateOfBirth",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "gender",
               "type": "string"
             },
             {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 struct Loan {
     string loanType;
@@ -14,14 +14,11 @@ struct EmploymentInformation {
     string employerName;
     string occupation;
     uint256 incomePerYear;
-    string startTime;
-    string endTime;
 }
 
 struct PersonalInformation {
     string name;
     string dateOfBirth;
-    string gender;
     string panNumber;
 }
 
@@ -57,15 +54,10 @@ contract ApniBachat {
     uint256 maxLoanLimitForNewCustomer = 2000;
 
     uint256 totalBalance = 0;
-    CredibilityScore credibilityScore;
+    CredibilityScore credibilityScoreContract;
 
     constructor(address contractAddress) {
-        credibilityScore = CredibilityScore(contractAddress);
-    }
-
-    modifier onlyEnrolled(string memory panNumber) {
-        require(enrolled[panNumber], "User not enrolled");
-        _;
+        credibilityScoreContract = CredibilityScore(contractAddress);
     }
 
     function getBalance(
@@ -73,4 +65,24 @@ contract ApniBachat {
     ) public view onlyEnrolled(panNumber) returns (uint256) {
         return balance[panNumber];
     }
+
+    function enroll(
+        PersonalInformation memory personalInformation,
+        string memory panNumber,
+        EmploymentInformation memory employmentInformation
+    ) public {
+        enrolled[panNumber] = true;
+        users[panNumber] = personalInformation;
+
+        console.log(panNumber);
+
+        credibilityScoreContract.addPersonalInformation(panNumber, personalInformation);
+        credibilityScoreContract.addEmploymentInformation(panNumber, employmentInformation);
+    }
+
+    modifier onlyEnrolled(string memory panNumber) {
+        require(enrolled[panNumber], "User not enrolled");
+        _;
+    }
+
 }
