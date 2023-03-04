@@ -1,23 +1,18 @@
 import { useAuth } from "@arcana/auth-react";
-import { RouterProvider } from "react-router-dom";
-import { routes } from "./routes";
 import { CircularProgress } from "@mui/material";
+import React from "react";
 
-function App() {
+const AuthChecker = ({ children }) => {
   const auth = useAuth();
 
-  if (auth.loading)
+  if (!auth.user)
     return (
       <div className="center-container">
         <CircularProgress />
       </div>
     );
 
-  return (
-    <>
-      <RouterProvider router={routes} />
-    </>
-  );
-}
+  return <>{children}</>;
+};
 
-export default App;
+export default AuthChecker;

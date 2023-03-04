@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -5,6 +7,13 @@
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
-  background-color: #f5f5f5;
+  font-family: 'Poppins', sans-serif !important;
+  background-image: url('./assets/mainBG.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
