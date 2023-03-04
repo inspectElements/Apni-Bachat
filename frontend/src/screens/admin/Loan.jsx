@@ -216,7 +216,7 @@ function Loan() {
       >
         <Box sx={style} className="relative">
           <img
-            src="https://png.pngtree.com/png-vector/20211016/ourmid/pngtree-rejected-icon-design-rounded-shape-png-image_3988333.png"
+            src="/cross.final.gif"
             alt="rejected"
           />
           <h2 className="text-center font-bold my-3">
@@ -236,12 +236,7 @@ function Loan() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} className="relative">
-          <iframe
-            src="https://giphy.com/embed/YlSR3n9yZrxfgVzagm"
-            class="giphy-embed"
-            allowFullScreen
-            className="w-full h-96"
-          ></iframe>
+          <img src="/tick.final.gif"/>
           <div className="w-full flex justify-center items-start">
             <Button onClick={handleCloseAccept} variant="outlined" fullWidth>
               OK
