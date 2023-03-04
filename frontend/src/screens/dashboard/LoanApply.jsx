@@ -1,9 +1,199 @@
-import React from 'react'
+import React from "react";
+import {
+  Typography,
+  TextField,
+  Paper,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import DoneIcon from "@mui/icons-material/Done";
 
-const LoanApply = () => {
-  return (
-    <div>LoanApply</div>
-  )
+function calculateEMI(principal, interestRate, loanPeriod) {
+  // Convert interest rate from percentage to decimal
+  interestRate = interestRate / 100 / 12;
+
+  // Calculate monthly payment (EMI)
+  const numerator = principal * interestRate * Math.pow(1 + interestRate, loanPeriod);
+  const denominator = Math.pow(1 + interestRate, loanPeriod) - 1;
+  const monthlyPayment = (numerator / denominator).toFixed(2);
+
+  return monthlyPayment;
 }
 
-export default LoanApply
+
+const Card = (props) => {
+  const navigate = useNavigate();
+  return (
+    <>
+      <Paper
+        elevation={3}
+        sx={{
+          width: "90vw",
+          height: "auto",
+          padding: "1.5rem",
+          marginBottom: "5rem",
+          background:
+            "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+          border: "2px solid black",
+          borderRadius: "13px",
+          backdropFilter: "blur(5px)",
+        }}
+      >
+        <div className="flex flex-col justify-center items-center">
+          <Typography
+            variant="h4"
+            component="h2"
+            color="black"
+            sx={{
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+              color: "black",
+              textAlign: "center",
+              fontFamily: "Poppins, sans-serif",
+            }}
+          >
+            {props.title}
+          </Typography>
+          {props.children}
+        </div>
+      </Paper>
+    </>
+  );
+};
+
+const LoanApply = () => {
+  const navigate = useNavigate();
+  return (
+    <>
+      <div className="bg min-h-[100vh]">
+        <div className="pt-20 pb-14">
+          <div className="absolute inset-0 mt-5 ml-5">
+            <svg
+              className="w-7"
+              fill="#000"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"
+              onClick={() => window.history.back()}
+            >
+              <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+            </svg>
+          </div>
+          <Typography
+            variant="h4"
+            sx={{
+              fontSize: "1.95rem",
+              fontWeight: "bold",
+              color: "#000",
+              textAlign: "center",
+              pt: { mobile: 15, tablet: 5, laptop: 5 },
+              mb: 1,
+              fontFamily: "Poppins, sans-serif",
+            }}
+          >
+            Apply Loan
+          </Typography>
+          <p
+            style={{
+              textAlign: "center",
+            }}
+          >
+            Apply for Loan Fast and Easy
+          </p>
+        </div>
+        <div className="flex flex-col gap-5 justify-center items-center">
+          <Card title="Loan at ">
+            <TextField
+              label="Amount"
+              variant="outlined"
+              sx={{ width: "95%", marginTop: "2rem" }}
+            />
+            <TextField
+              label="Time Period"
+              placeholder="in months"
+              variant="outlined"
+              sx={{ width: "95%", marginTop: "2rem", marginBottom: "1rem" }}
+            />
+            <FormControl sx={{ width: "95%", marginY: "1rem" }}>
+              <InputLabel id="outputType-label">Loan Type</InputLabel>
+              <Select
+                labelId="outputType-label"
+                id="outputType"
+                label="Loan Type"
+              >
+                <MenuItem value="9">Home Loans</MenuItem>
+                <MenuItem value="12">Personal Loans</MenuItem>
+                <MenuItem value="7">Car Loans</MenuItem>
+                <MenuItem value="5">Education Loans</MenuItem>
+                <MenuItem value="14">Business Loans</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              id="outputValue"
+              placeholder="Estimated Monthly EMI"
+              variant="outlined"
+              disabled
+              sx={{
+                "& .MuiInputBase-input.Mui-disabled": {
+                  WebkitTextFillColor: "#001220",
+                },
+                width: "95%", margin: "1rem"
+              }}
+            />
+            <label
+              htmlFor="income"
+              className="relative"
+              style={{ width: "95%" }}
+            >
+              <Button
+                variant="raised"
+                component="span"
+                sx={{
+                  marginY: "1rem",
+                  width: "100%",
+                  height: "50px",
+                  border: "1px solid #000",
+                }}
+              >
+                Upload Collateral Proof
+              </Button>
+            </label>
+            <input
+              accept="image/*"
+              style={{ display: "none" }}
+              id="income"
+              multiple
+              type="file"
+            />
+            <Button
+              variant="contained"
+              sx={{
+                disableRipple: true,
+                width: "95%",
+                background:
+                  "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                height: "50px",
+                color: "#000",
+                border: "2px solid #000",
+                borderRadius: "10px",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                textTransform: "none",
+                marginTop: "1rem",
+              }}
+              onClick={() => navigate(`/dashboard/loan`)}
+            >
+              Deposit
+            </Button>
+          </Card>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default LoanApply;
