@@ -66,7 +66,11 @@ function Account() {
       </Modal>
       <Sidebar />
 
-      <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2">
+      <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2 overflow-y-auto">
+        <RequestItem handleOpen={handleOpen} />
+        <RequestItem handleOpen={handleOpen} />
+        <RequestItem handleOpen={handleOpen} />
+        <RequestItem handleOpen={handleOpen} />
         <RequestItem handleOpen={handleOpen} />
       </div>
     </Box>
