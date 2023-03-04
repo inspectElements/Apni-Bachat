@@ -46,6 +46,16 @@ const Chat = () => {
   const [messages, setMessages] = React.useState([]);
   function submit(e) {
     // apiPost("chat/chatbot", { msg: msg }, setData);
+    fetch("https://sanjeevni-production.up.railway.app/api/chat/chatbot", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ msg: msg }),
+    }).then((res)=>{
+      console.log(res.data)
+    })
     setMessages((oldArray) => [...oldArray, { msg: msg, type: "user" }]);
     setMsg("");
   }
