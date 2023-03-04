@@ -9,7 +9,7 @@ const Card = (props) => {
       <Paper
         elevation={3}
         sx={{
-          width: "300px",
+          width: "90vw",
           height: "auto",
           padding: "1.5rem",
           background:
