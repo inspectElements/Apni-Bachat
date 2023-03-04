@@ -103,6 +103,7 @@ const Transact = () => {
     if (!depMoney) return;
     setLoading(true);
     setModal(true);
+    setStepCount(0);
 
     const amountInWei = utils.parseEther(depMoney.toString());
 
@@ -135,6 +136,13 @@ const Transact = () => {
   const withdraw = async () => {
     if (!withMoney) return;
     setLoading(true);
+
+    setModal(true);
+    setStepCount(0);
+
+    const amountInWei = utils.parseEther(withMoney.toString());
+    console.log("amountInWei", amountInWei);
+
     let docRef = await getDocs(collection(db, "user"));
     let r = {};
     docRef.forEach((doc) => {
@@ -143,12 +151,22 @@ const Transact = () => {
           id: doc.id,
           amount: doc.data().balance,
           kyc_done: doc.data().kyc_done,
+          pan: doc.data().pan,
         };
     });
     if (parseFloat(r.amount) < parseFloat(withMoney)) return;
+
+    setStepCount((prev) => prev + 1);
+
+    await contract.withdraw(amountInWei, r.pan);
+
     await updateDoc(doc(db, "user", r.id), {
       balance: parseFloat(parseFloat(r.amount) - parseFloat(withMoney)),
     });
+
+    setStepCount((prev) => prev + 1);
+    setWithMoney("");
+
     setLoading(false);
     navigate(0);
   };
