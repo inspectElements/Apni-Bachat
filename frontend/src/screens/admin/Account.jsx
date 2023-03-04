@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  Modal,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import Sidebar from "./Sidebar";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 import { useAuth } from "@arcana/auth-react";
 
