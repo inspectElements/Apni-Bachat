@@ -9,8 +9,8 @@ import Loan from "../screens/dashboard/Loan";
 import LoanApply from "../screens/dashboard/LoanApply";
 import LoanRepay from "../screens/dashboard/LoanRepay";
 import Trade from "../screens/dashboard/Trade";
-import ApproveAcount from "../screens/admin/Acount";
 import ApproveLoan from "../screens/admin/Loan";
+import Account from "../screens/admin/Account";
 
 export const routes = createBrowserRouter([
   {
@@ -54,11 +54,11 @@ export const routes = createBrowserRouter([
     element: <Trade />,
   },
   {
-    path: "/admin/approve-acount",
-    element: <ApproveAcount />,
+    path: "/admin/approve-account",
+    element: <Account />,
   },
   {
-    path: "/admin/approve-acount",
+    path: "/admin/approve-loan",
     element: <ApproveLoan />,
   },
 ]);
