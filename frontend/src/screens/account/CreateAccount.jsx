@@ -48,10 +48,10 @@ const CreateAccount = () => {
       let aadharDownloadURL = await getDownloadURL(aadharSnap.ref);
       let data = {
         name,
-        mobile: parseInt(mobile),
-        aadhar: parseInt(aadhar),
+        mobile: parseFloat(mobile),
+        aadhar: parseFloat(aadhar),
         pan,
-        income: parseInt(income),
+        income: parseFloat(income),
         panImg: panDownloadURL,
         incomeImg: incomeDownloadURL,
         signatureImg: signatureDownloadURL,
