@@ -221,9 +221,10 @@ function Loan() {
       >
         <Box sx={style} className="relative">
           <img
-            src="https://png.pngtree.com/png-vector/20210414/ourmid/pngtree-red-cross-vector-icon-no-symbol-rejected-cancel-negative-sign-deny-png-image_3216548.jpg"
+            src="https://png.pngtree.com/png-vector/20211016/ourmid/pngtree-rejected-icon-design-rounded-shape-png-image_3988333.png"
             alt="rejected"
           />
+          <h2 className="text-center font-bold my-3">Contract rejected the loan due to bad credibility</h2>
           <div className="w-full flex justify-center items-start">
             <Button onClick={handleCloseRejected} variant="contained">
               Ok

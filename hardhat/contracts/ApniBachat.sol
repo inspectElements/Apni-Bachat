@@ -147,25 +147,36 @@ contract ApniBachat {
             amount = amountWithInterest;
             loans[panNumber].loanAmount = 0;
 
-            Loan memory loanRepaymentHistory = loans[panNumber];
+            // Loan memory loanRepaymentHistory = loans[panNumber];
 
-            if (
-                block.timestamp >
-                loans[panNumber].startDate +
-                    (loans[panNumber].loanTenure * 30 days)
-            ) {
-                loanRepaymentHistory.repaymentStatus = "delayed";
-            } else {
-                loanRepaymentHistory.repaymentStatus = "on_time";
-            }
+            // if (
+            //     block.timestamp >
+            //     loans[panNumber].startDate +
+            //         (loans[panNumber].loanTenure * 30 days)
+            // ) {
+            //     loanRepaymentHistory.repaymentStatus = "delayed";
+            // } else {
+            //     loanRepaymentHistory.repaymentStatus = "on_time";
+            // }
 
-            credibilityScoreContract.addLoanRepaymentHistory(
-                panNumber,
-                loanRepaymentHistory
-            );
+            // credibilityScoreContract.addLoanRepaymentHistory(
+            //     panNumber,
+            //     loanRepaymentHistory
+            // );
         } else {
             loans[panNumber].loanAmount -= amount;
         }
         balance[panNumber] -= amount;
+    }
+
+    // function that adds loan repayment history to the contract
+    function addLoanRepaymentHistory(
+        string memory panNumber,
+        Loan memory loanRepaymentHistory
+    ) public {
+        credibilityScoreContract.addLoanRepaymentHistory(
+            panNumber,
+            loanRepaymentHistory
+        );
     }
 }

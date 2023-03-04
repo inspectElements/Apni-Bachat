@@ -112,11 +112,19 @@ describe("ApniBachat", () => {
         financialData.personalInformation.panNumber,
         ethers.utils.parseEther("150")
       );
+
     await apniBachat
       .connect(account1)
       .makeLoanPayment(
         financialData.personalInformation.panNumber,
         ethers.utils.parseEther("60")
+      );
+
+    await apniBachat
+      .connect(account1)
+      .addLoanRepaymentHistory(
+        financialData.personalInformation.panNumber,
+        financialData.loanDeets
       );
 
     const cred = await credibilityScore
