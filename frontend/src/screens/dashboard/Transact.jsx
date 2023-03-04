@@ -6,10 +6,16 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 import { useAuth } from "@arcana/auth-react";
+
+import { providers, Contract, utils } from "ethers";
+import { apniBachatConractAddress } from "../../constants";
+import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
+import { arcanaProvider } from "../../index";
+import CustomizedDialogs from "../../components/CustomizedDialogs";
+import { useNavigate } from "react-router-dom";
 
 const Card = (props) => {
   return (
@@ -50,11 +56,25 @@ const Card = (props) => {
 };
 
 const Transact = () => {
+  const provider = new providers.Web3Provider(arcanaProvider.provider);
+  // get the end user
+  const signer = provider.getSigner();
+  // get the smart contract
+  const contract = new Contract(
+    apniBachatConractAddress,
+    ApniBachat.abi,
+    signer
+  );
+
+  const [modal, setModal] = useState(false);
+  const [stepCount, setStepCount] = useState(0);
+  const [error, setError] = useState(null);
+
   const auth = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [depMoney, setDepMoney] = useState(false);
-  const [withMoney, setWithMoney] = useState(false);
+  const [depMoney, setDepMoney] = useState("");
+  const [withMoney, setWithMoney] = useState("");
   const [data, setData] = useState();
 
   useEffect(() => {
@@ -65,7 +85,7 @@ const Transact = () => {
       snapshot.forEach((doc) => {
         let temp = doc.data();
         if (temp.uid === auth.user.address) {
-          if (!temp.kyc_done) navigate('/home');
+          if (!temp.kyc_done) navigate("/home");
           tData.push({ ...doc.data(), id: doc.id });
         }
       });
@@ -73,30 +93,45 @@ const Transact = () => {
     };
     getProperties();
   }, [auth]);
+
   useEffect(() => {
     setLoading(true);
     if (data) setLoading(false);
   }, [data]);
+
   const deposit = async () => {
     if (!depMoney) return;
     setLoading(true);
+    setModal(true);
+
+    const amountInWei = utils.parseEther(depMoney.toString());
+
+    console.log("amountInWei", amountInWei);
+
     let docRef = await getDocs(collection(db, "user"));
     let r = {};
     docRef.forEach((doc) => {
-      if (doc.data().uid === auth.user.address)
-        r = {
-          id: doc.id,
-          amount: doc.data().balance,
-          kyc_done: doc.data().kyc_done,
-        };
+      if (doc.data().uid == auth.user.address)
+        r = { id: doc.id, amount: doc.data().balance, pan: doc.data().pan };
     });
-    if (!r.kyc_done) return;
+
+    setStepCount((prev) => prev + 1);
+
+    await contract.deposit(r.pan, {
+      value: amountInWei,
+    });
+
     await updateDoc(doc(db, "user", r.id), {
-      balance: parseFloat(parseInt(r.amount) + parseFloat(depMoney)),
+      balance: parseFloat(parseFloat(r.amount) + parseFloat(depMoney)),
     });
+
+    setStepCount((prev) => prev + 1);
+    setDepMoney("");
+
     setLoading(false);
     navigate(0);
   };
+
   const withdraw = async () => {
     if (!withMoney) return;
     setLoading(true);
@@ -110,16 +145,28 @@ const Transact = () => {
           kyc_done: doc.data().kyc_done,
         };
     });
-    if (!r.kyc_done) return;
-    if (parseInt(r.amount) < parseInt(withMoney)) return;
+    if (parseFloat(r.amount) < parseFloat(withMoney)) return;
     await updateDoc(doc(db, "user", r.id), {
-      balance: parseInt(parseInt(r.amount) - parseInt(withMoney)),
+      balance: parseFloat(parseFloat(r.amount) - parseFloat(withMoney)),
     });
     setLoading(false);
     navigate(0);
   };
+  console.log(data);
   return (
     <>
+      <CustomizedDialogs
+        open={modal}
+        setOpen={setModal}
+        stepCount={stepCount}
+        error={error}
+        steps={[
+          "Initiating contract interaction",
+          "Transacting with Apni Bachat smart contract",
+          "Success",
+        ]}
+      />
+
       {loading && (
         <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
           <CircularProgress />
@@ -161,11 +208,12 @@ const Transact = () => {
           </p>
         </div>
         <div className="flex flex-col gap-5 justify-center items-center">
-          <Card title={`Balance: ${data && data[0]?.balance || 0}`} />
+          <Card title={`Balance: ${(data && data[0]?.balance) || 0}`} />
           <Card title="Deposit">
             <TextField
               label="Amount"
               variant="outlined"
+              value={depMoney}
               sx={{ width: "95%", margin: "2rem", marginTop: "3rem" }}
               onChange={(e) => setDepMoney(e.target.value)}
             />
@@ -194,6 +242,7 @@ const Transact = () => {
             <TextField
               label="Amount"
               variant="outlined"
+              value={withMoney}
               sx={{ width: "95%", margin: "2rem", marginTop: "3rem" }}
               onChange={(e) => setWithMoney(e.target.value)}
             />

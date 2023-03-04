@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "../screens/home/Login";
 import Home from "../screens/home/Home";
+import Chat from "../screens/chat/Chat";
 import CreateAccount from "../screens/account/CreateAccount";
 import Update from "../screens/account/Update";
 import KYC from "../screens/account/KYC";
@@ -19,6 +20,10 @@ export const routes = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
+  },
+  {
+    path: "/chat",
+    element: <Chat />,
   },
   {
     path: "/create",
