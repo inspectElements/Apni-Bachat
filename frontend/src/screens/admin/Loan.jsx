@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import Sidebar from "./Sidebar";
 import { collection, doc, getDocs } from "firebase/firestore";
 import { db } from "../../configs/firebase";
+
+import { useAuth } from "@arcana/auth-react";
+import { providers, Contract } from "ethers";
+import {
+  apniBachatConractAddress,
+  credibilityScoreConractAddress,
+} from "../../constants";
+import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
+import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/CredibilityScore.json";
+import { arcanaProvider } from "../../index";
+import CustomizedDialogs from "../../components/CustomizedDialogs";
 
 const RequestItem = (props) => {
   return (
@@ -12,7 +23,13 @@ const RequestItem = (props) => {
           <h1>Loan id: {props.id}</h1>
           <h3>Loan amount: {props.principal}</h3>
         </div>
-        <Button variant="contained" onClick={props.handleOpen}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            props.setPan(props.pan);
+            props.handleOpen();
+          }}
+        >
           Approve
         </Button>
       </div>
@@ -31,21 +48,54 @@ const style = {
   p: 4,
 };
 function Loan() {
+  const provider = new providers.Web3Provider(arcanaProvider.provider);
+  // get the end user
+  const signer = provider.getSigner();
+  // get the smart contract
+  const contract = new Contract(
+    credibilityScoreConractAddress,
+    CredibilityScore.abi,
+    signer
+  );
+
+  const [panCard, setPanCard] = useState("");
+
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [data, setData] = React.useState();
+
+  const [parsedCreditScore, setParsedCreditScore] = React.useState(null);
+
   React.useEffect(() => {
+    fetchCreditScore();
+
     let r = [];
     getDocs(collection(db, "user")).then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         doc.data().loan.forEach((item) => {
-          if (item.status == "applied") r.push(item);
+          if (item.status === "applied") {
+            item["pan"] = doc.data().pan;
+            r.push(item);
+          }
         });
       });
       setData(r);
     });
   }, []);
+
+  const fetchCreditScore = async () => {
+    console.log("approve", panCard);
+
+    await arcanaProvider.connect();
+
+    const creditScore = await contract.calculateCreditScore(panCard);
+    const _parsedCreditScore = parseInt(creditScore._hex.substring(2), 16);
+    setParsedCreditScore(_parsedCreditScore);
+  };
+
+  const approveOnClick = async () => {};
+
   return (
     <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
       <Modal
@@ -59,16 +109,18 @@ function Loan() {
             src="https://t4.ftcdn.net/jpg/03/21/80/19/360_F_321801932_i0XO5LAnSNpKnMxeF4OijfIrOEC9aEB8.jpg"
             alt="meter"
           />
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            className="text-center"
-          >
-            Credit Score: 52
-          </Typography>
+          {parsedCreditScore !== null && (
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              className="text-center"
+            >
+              Credit Score: {parsedCreditScore}
+            </Typography>
+          )}
           <div className="w-full flex justify-center items-start">
-            <Button>approve</Button>
+            <Button onClick={approveOnClick}>approve</Button>
             <Button>reject</Button>
           </div>
         </Box>
@@ -77,7 +129,12 @@ function Loan() {
 
       <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2">
         {data?.map((item, index) => (
-          <RequestItem handleOpen={handleOpen} {...item} id={index} />
+          <RequestItem
+            handleOpen={handleOpen}
+            setPan={setPanCard}
+            {...item}
+            id={index}
+          />
         ))}
       </div>
     </Box>
