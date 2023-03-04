@@ -10,9 +10,10 @@ const financialData = {
   loanDeets: {
     loanType: "Home Loan",
     loanAmount: ethers.utils.parseEther("200"),
-    loanTenure: 60,
+    loanTenure: 1,
     interestRate: 10,
     repaymentStatus: "on_time",
+    startDate: 1610000000,
   },
   employmentInformation: {
     employerName: "Mera Employer",
@@ -111,5 +112,16 @@ describe("ApniBachat", () => {
         financialData.personalInformation.panNumber,
         ethers.utils.parseEther("150")
       );
+    await apniBachat
+      .connect(account1)
+      .makeLoanPayment(
+        financialData.personalInformation.panNumber,
+        ethers.utils.parseEther("60")
+      );
+
+    const cred = await credibilityScore
+      .connect(account1)
+      .calculateCreditScore(financialData.personalInformation.panNumber);
+    console.log(cred);
   });
 });
