@@ -14,8 +14,6 @@ contract CredibilityScore {
         string employerName;
         string occupation;
         uint256 incomePerYear;
-        string startTime;
-        string endTime;
     }
 
     struct LoanRepaymentHistory {
