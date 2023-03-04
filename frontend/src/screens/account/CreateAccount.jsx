@@ -67,12 +67,12 @@ const CreateAccount = () => {
   };
   return (
     <>
-    {loading &&
-      <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
-        <CircularProgress/>
-      </div>
-    }
-    <div className="bg"></div>
+      {loading && (
+        <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
+          <CircularProgress />
+        </div>
+      )}
+      <div className="bg"></div>
       <div className="p-14">
         <Typography
           variant="h4"
