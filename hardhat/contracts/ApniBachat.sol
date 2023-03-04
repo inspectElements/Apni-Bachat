@@ -9,6 +9,7 @@ struct Loan {
     uint256 loanTenure;
     uint256 interestRate;
     string repaymentStatus;
+    uint256 startDate;
 }
 
 struct EmploymentInformation {
@@ -145,6 +146,23 @@ contract ApniBachat {
         if (amount >= amountWithInterest) {
             amount = amountWithInterest;
             loans[panNumber].loanAmount = 0;
+
+            Loan memory loanRepaymentHistory = loans[panNumber];
+
+            if (
+                block.timestamp >
+                loans[panNumber].startDate +
+                    (loans[panNumber].loanTenure * 30 days)
+            ) {
+                loanRepaymentHistory.repaymentStatus = "delayed";
+            } else {
+                loanRepaymentHistory.repaymentStatus = "on_time";
+            }
+
+            credibilityScoreContract.addLoanRepaymentHistory(
+                panNumber,
+                loanRepaymentHistory
+            );
         } else {
             loans[panNumber].loanAmount -= amount;
         }
