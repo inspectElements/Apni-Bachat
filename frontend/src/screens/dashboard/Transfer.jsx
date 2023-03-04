@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { Typography, TextField, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -40,7 +40,7 @@ const Card = (props) => {
   );
 };
 
-const Transact = () => {
+const Transfer = () => {
   const navigate = useNavigate();
   return (
     <>
@@ -80,11 +80,16 @@ const Transact = () => {
           </p>
         </div>
         <div className="flex flex-col gap-5 justify-center items-center">
-          <Card title="Deposit">
+          <Card title="Transfer">
+            <TextField
+              label="Wallet Address"
+              variant="outlined"
+              sx={{ width: "95%", marginTop: "3rem" }}
+            />
             <TextField
               label="Amount"
               variant="outlined"
-              sx={{ width: "95%", margin: "2rem", marginTop: "3rem" }}
+              sx={{ width: "95%", margin: "2rem"}}
             />
             <Button
               variant="contained"
@@ -101,43 +106,17 @@ const Transact = () => {
                 fontWeight: "bold",
                 fontSize: "1.2rem",
                 textTransform: "none",
+                marginTop: "1rem",
               }}
               onClick={() => navigate(`/dashboard`)}
             >
               Deposit
             </Button>
           </Card>
-          <Card title="Withdraw">
-            <TextField
-              label="Amount"
-              variant="outlined"
-              sx={{ width: "95%", margin: "2rem", marginTop: "3rem" }}
-            />
-            <Button
-              variant="contained"
-              sx={{
-                disableRipple: true,
-                width: "95%",
-                background:
-                  "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
-                height: "50px",
-                color: "#000",
-                border: "2px solid #000",
-                borderRadius: "10px",
-                fontFamily: "Poppins, sans-serif",
-                fontWeight: "bold",
-                fontSize: "1.2rem",
-                textTransform: "none",
-              }}
-              onClick={() => navigate(`/dashboard`)}
-            >
-              Withdraw
-            </Button>
-          </Card>
         </div>
       </div>
     </>
   );
-};
+}
 
-export default Transact;
+export default Transfer
