@@ -111,6 +111,7 @@ const LoanApply = () => {
         status: "applied",
         borrower: auth.user.address,
         id: uuid(),
+        periodRemaining: parseInt(loanPeriod),
       };
       r.loan.push(loan);
       await updateDoc(doc(db, "user", r.id), {

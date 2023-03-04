@@ -71,8 +71,14 @@ function Loan() {
   const [panCard, setPanCard] = useState("");
 
   const [open, setOpen] = React.useState(false);
+  const [openAccept, setOpenAccept] = React.useState(false);
+  const [openRejected, setOpenRejected] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleOpenAccept = () => setOpenAccept(true);
+  const handleCloseAccept = () => setOpenAccept(false);
+  const handleOpenRejected = () => setOpenRejected(true);
+  const handleCloseRejected = () => setOpenRejected(false);
   const [data, setData] = React.useState();
   const [id, setId] = React.useState();
   const [borrower, setBorrower] = React.useState();
@@ -131,12 +137,12 @@ function Loan() {
       await updateDoc(doc(db, "user", r.id), {
         loan: r.loan,
       }).then(() => {
-        console.log("Document successfully updated!");
+        handleClose();
+        handleOpenAccept();
       });
     } else {
-      // rejection modal
+      await rejectLoanRequest();
     }
-
     return;
   };
 
@@ -198,6 +204,37 @@ function Loan() {
             <Button onClick={fetchCreditScore}>fetch</Button>
             <Button onClick={approveOnClick}>approve</Button>
             <Button onClick={rejectLoanRequest}>reject</Button>
+          </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={openRejected}
+        onClose={handleCloseRejected}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style} className="relative">
+          <img src="https://png.pngtree.com/png-vector/20210414/ourmid/pngtree-red-cross-vector-icon-no-symbol-rejected-cancel-negative-sign-deny-png-image_3216548.jpg" alt="rejected" />
+          <div className="w-full flex justify-center items-start">
+            <Button onClick={handleCloseRejected} variant="contained">Ok</Button>
+          </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={openAccept}
+        onClose={handleCloseAccept}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style} className="relative">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/2143/2143150.png"
+            alt="approved"
+          />
+          <div className="w-full flex justify-center items-start">
+            <Button onClick={handleCloseAccept} variant="contained">
+              OKII
+            </Button>
           </div>
         </Box>
       </Modal>
