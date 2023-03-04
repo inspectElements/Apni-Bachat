@@ -113,6 +113,7 @@ const Update = () => {
             fontWeight: "bold",
             fontSize: "1.2rem",
             textTransform: "none",
+            backdropFilter: "blur(5px)",
           }}
           onClick={() => navigate(`/home`)}
         >

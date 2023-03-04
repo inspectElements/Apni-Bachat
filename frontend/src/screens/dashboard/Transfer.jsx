@@ -16,6 +16,7 @@ const Card = (props) => {
             "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
           border: "2px solid black",
           borderRadius: "13px",
+          backdropFilter: "blur(5px)",
         }}
       >
         <div className="flex flex-col justify-center items-center">
@@ -107,6 +108,7 @@ const Transfer = () => {
                 fontSize: "1.2rem",
                 textTransform: "none",
                 marginTop: "1rem",
+                backdropFilter: "blur(5px)",
               }}
               onClick={() => navigate(`/dashboard`)}
             >

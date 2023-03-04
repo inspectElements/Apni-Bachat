@@ -262,6 +262,7 @@ const CreateAccount = () => {
                 fontSize: "1.2rem",
                 textTransform: "none",
                 marginTop: "1rem",
+                backdropFilter: "blur(5px)",
           }}
           onClick={() => create()}
         >
