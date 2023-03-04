@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -10,30 +10,34 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import DoneIcon from "@mui/icons-material/Done";
+import { useAuth } from "@arcana/auth-react";
+import { db } from "../../configs/firebase";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 
 const Card = (props) => {
   const navigate = useNavigate();
-  let color;
-  if (props.status === "approved") {
-    color = "#00FF00";
-  } else if (props.status === "pending") {
-    color = "#FFFF00";
-  } else {
-    color = "#FF0000";
-  }
-  let type;
-  if (props.type === "9") {
-    type = "Home Loan";
-  } else if (props.type === "12") {
-    type = "Personal Loan";
-  } else if (props.type === "7") {
-    type = "Car Loan";
-  } else if (props.type === "5") {
-    type = "Education Loan";
-  } else if (props.type === "14") {
-    type = "Business Loan";
-  }
+  const [type, setType] = React.useState("");
+  const [color, setColor] = React.useState("");
+  useEffect(() => {
+    if (props.status === "approved") {
+      setColor("#00FF00");
+    } else if (props.status === "applied") {
+      setColor("#FFFF00");
+    } else {
+      setColor("#FF0000");
+    }
+    if (props.type === 9) {
+      setType("Home Loan");
+    } else if (props.type === 12) {
+      setType("Personal Loan");
+    } else if (props.type === 7) {
+      setType("Car Loan");
+    } else if (props.type === 5) {
+      setType("Education Loan");
+    } else if (props.type === 14) {
+      setType("Business Loan");
+    }
+  }, []);
   return (
     <>
       <Paper
@@ -123,22 +127,22 @@ const Card = (props) => {
               </Typography>
             </div>
             <Typography
-                variant="h4"
-                component="h2"
-                color="black"
-                sx={{
-                  fontSize: "1.3rem",
-                  marginTop: "1.5rem",
-                  fontWeight: "bold",
-                  color: "black",
-                  textAlign: "center",
-                  fontFamily: "Poppins, sans-serif",
-                  textTransform: "uppercase",
-                  letterSpacing: "1px",
-                }}
-              >
-                status: {props.status}
-              </Typography>
+              variant="h4"
+              component="h2"
+              color="black"
+              sx={{
+                fontSize: "1.3rem",
+                marginTop: "1.5rem",
+                fontWeight: "bold",
+                color: "black",
+                textAlign: "center",
+                fontFamily: "Poppins, sans-serif",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+              }}
+            >
+              status: {props.status}
+            </Typography>
           </div>
         </div>
       </Paper>
@@ -148,6 +152,28 @@ const Card = (props) => {
 
 const LoanRepay = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
+  const [loading, setLoading] = React.useState(false);
+  const [data, setData] = React.useState([]);
+  useEffect(() => {
+    if (!auth) return;
+    if (auth.user) {
+      setLoading(true);
+      getDocs(collection(db, "user")).then((querySnapshot) => {
+        let r = {};
+        querySnapshot.forEach((doc) => {
+          if (doc.data().uid == auth.user.address)
+            r = { id: doc.id, loan: doc.data().loan };
+        });
+        setData(r);
+      });
+    }
+  }, [auth]);
+  useEffect(() => {
+    if (!auth) return;
+    if (!data) return;
+    setLoading(false);
+  }, [data]);
   return (
     <>
       <div className="bg min-h-[100vh]">
@@ -158,7 +184,7 @@ const LoanRepay = () => {
               fill="#000"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 448 512"
-              onClick={() => window.history.back()}
+              onClick={() => navigate("/dashboard/loan")}
             >
               <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
             </svg>
@@ -186,20 +212,15 @@ const LoanRepay = () => {
           </p>
         </div>
         <div className="flex flex-col gap-5 justify-center items-center">
-          <Card
-            title="Loan 1"
-            status="approved"
-            amount="0.5"
-            time="12"
-            type="5"
-          />
-          <Card
-            title="Loan 2"
-            status="pending"
-            amount="0.5"
-            time="12"
-            type="5"
-          />
+          {data?.loan?.map((item, index) => (
+            <Card
+              title={`Loan ${index + 1}`}
+              status={item.status}
+              amount={item.principal}
+              time={item.loanPeriod}
+              type={parseInt(item.interestRate)}
+            />
+          ))}
         </div>
       </div>
     </>

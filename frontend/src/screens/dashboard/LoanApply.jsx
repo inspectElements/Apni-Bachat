@@ -99,24 +99,24 @@ const LoanApply = () => {
       let docRef = await getDocs(collection(db, "user"));
       let r = {};
       docRef.forEach((doc) => {
-        if (doc.data().uid == auth.user.address)
-          r = { id: doc.id, loan: doc.data().loansApplied };
+        if (doc.data().uid === auth.user.address)
+          r = { id: doc.id, loan: doc.data().loan };
       });
-      r.loan = r.loan || [];
       const loan = {
         principal: parseFloat(principal),
         interestRate: parseFloat(interestRate),
         loanPeriod: parseInt(loanPeriod),
         monthlyPayment: parseFloat(monthlyPayment),
         collateral: url,
-        approved: false,
+        status: "applied",
         borrower: auth.user.address,
       };
-      r.loan.push(loan)
+      r.loan.push(loan);
       await updateDoc(doc(db, "user", r.id), {
         loan: r.loan,
       });
       setLoading(false);
+      navigate("/dashboard/loan/status");
     }
   };
   return (
@@ -134,7 +134,7 @@ const LoanApply = () => {
               fill="#000"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 448 512"
-              onClick={() => window.history.back()}
+              onClick={() => navigate("/dashboard/loan")}
             >
               <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
             </svg>

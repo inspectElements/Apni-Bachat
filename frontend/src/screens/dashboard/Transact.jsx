@@ -9,6 +9,7 @@ import {
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 import { useAuth } from "@arcana/auth-react";
+import { useNavigate } from "react-router-dom";
 
 import { providers, Contract, utils } from "ethers";
 import { apniBachatConractAddress } from "../../constants";
@@ -70,6 +71,7 @@ const Transact = () => {
   const [error, setError] = useState(null);
 
   const auth = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [depMoney, setDepMoney] = useState("");
   const [withMoney, setWithMoney] = useState("");
@@ -82,7 +84,8 @@ const Transact = () => {
       let tData = [];
       snapshot.forEach((doc) => {
         let temp = doc.data();
-        if (!temp.kyc_done) {
+        if (temp.uid === auth.user.address) {
+          if (!temp.kyc_done) navigate("/home");
           tData.push({ ...doc.data(), id: doc.id });
         }
       });
@@ -126,6 +129,7 @@ const Transact = () => {
     setDepMoney("");
 
     setLoading(false);
+    navigate(0);
   };
 
   const withdraw = async () => {
@@ -134,14 +138,19 @@ const Transact = () => {
     let docRef = await getDocs(collection(db, "user"));
     let r = {};
     docRef.forEach((doc) => {
-      if (doc.data().uid == auth.user.address)
-        r = { id: doc.id, amount: doc.data().balance };
+      if (doc.data().uid === auth.user.address)
+        r = {
+          id: doc.id,
+          amount: doc.data().balance,
+          kyc_done: doc.data().kyc_done,
+        };
     });
     if (parseFloat(r.amount) < parseFloat(withMoney)) return;
     await updateDoc(doc(db, "user", r.id), {
       balance: parseFloat(parseFloat(r.amount) - parseFloat(withMoney)),
     });
     setLoading(false);
+    navigate(0);
   };
 
   return (
@@ -171,7 +180,7 @@ const Transact = () => {
               fill="#000"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 448 512"
-              onClick={() => window.history.back()}
+              onClick={() => navigate("/dashboard")}
             >
               <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
             </svg>
@@ -199,6 +208,7 @@ const Transact = () => {
           </p>
         </div>
         <div className="flex flex-col gap-5 justify-center items-center">
+          <Card title={`Balance: ${(data && data[0]?.balance) || 0}`} />
           <Card title="Deposit">
             <TextField
               label="Amount"
