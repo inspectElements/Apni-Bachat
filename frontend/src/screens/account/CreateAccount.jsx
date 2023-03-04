@@ -58,6 +58,7 @@ const CreateAccount = () => {
         aadharImg: aadharDownloadURL,
         uid: auth.user.address,
         kyc_done: false,
+        balance: 0,
       };
       await addDoc(collection(db, "user"), data);
       setLoading(false);
