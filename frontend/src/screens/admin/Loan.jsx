@@ -124,10 +124,12 @@ function Loan() {
         querySnapshot.forEach((doc) => {
           if (doc.data().uid === borrower) {
             r["id"] = doc.id;
+            r['balance'] = doc.data().balance;
             r["loan"] = [];
             doc.data().loan.forEach((item) => {
               console.log(item.id, id);
               if (item.id === id) {
+                r['balance'] = r['balance'] + item.principal;
                 item.status = "approved";
               }
               r["loan"].push(item);
@@ -137,6 +139,7 @@ function Loan() {
       });
       console.log(r);
       await updateDoc(doc(db, "user", r.id), {
+        balance: r.balance,
         loan: r.loan,
       }).then(() => {
         handleClose();
