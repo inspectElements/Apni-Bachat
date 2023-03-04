@@ -64,9 +64,52 @@ describe("ApniBachat", () => {
     console.log(cred);
   });
 
+  it("Deposit", async () => {
+    await apniBachat
+      .connect(account1)
+      .deposit(financialData.personalInformation.panNumber, {
+        value: ethers.utils.parseEther("1000"),
+      });
+  });
+
   it("Get balance", async () => {
     await apniBachat
       .connect(account1)
       .getBalance(financialData.personalInformation.panNumber);
+  });
+
+  it("Withdraw", async () => {
+    await apniBachat
+      .connect(account1)
+      .withdraw(
+        ethers.utils.parseEther("10"),
+        financialData.personalInformation.panNumber
+      );
+  });
+
+  it("Request Loan", async () => {
+    await apniBachat
+      .connect(account1)
+      .requestLoan(
+        financialData.personalInformation.panNumber,
+        financialData.loanDeets
+      );
+  });
+
+  it("Approve Loan", async () => {
+    const approvalString = await apniBachat
+      .connect(account1)
+      .approveLoan(financialData.personalInformation.panNumber);
+
+    expect(approvalString).to.equal("approved");
+  });
+
+  it("Make Loan Payment", async () => {
+    await apniBachat
+      .connect(account1)
+      .makeLoanPayment(
+        financialData.personalInformation.panNumber,
+        ethers.utils.parseEther("150")
+      );
   });
 });
