@@ -22,6 +22,7 @@ contract CredibilityScore {
         uint256 loanTenure;
         uint256 interestRate;
         string repaymentStatus;
+        uint256 startDate;
     }
 
     struct CreditCardHistory {

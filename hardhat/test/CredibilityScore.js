@@ -22,6 +22,7 @@ let financialData = {
         loanTenure: 36,
         interestRate: 10,
         repaymentStatus: "on_time",
+        startDate: 1610000000,
       },
     ],
   },
