@@ -22,12 +22,6 @@ let financialData = {
         loanTenure: 36,
         repaymentStatus: "on_time",
       },
-      {
-        loanType: "Home Loan",
-        loanAmount: 500000,
-        loanTenure: 60,
-        repaymentStatus: "delayed",
-      },
     ],
   },
 };
@@ -141,5 +135,13 @@ describe("CredibilityScore", function () {
     expect(loanRepaymentHistoryFromContract[3]).to.equal(
       loanRepaymentHistoryJson.repaymentStatus
     );
+  });
+
+  it("should calculate credit score", async () => {
+    const creditScore = await credibilityScore
+      .connect(authorized)
+      .calculateCreditScore(pan);
+
+    console.log(creditScore);
   });
 });
