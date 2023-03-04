@@ -1,16 +1,16 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "../screens/home/Login";
 import Home from "../screens/home/Home";
-import CreateAccount from "../screens/Account/CreateAccount";
-import KYC from "../screens/Account/KYC";
-import Dashboard from "../screens/Dashboard/Dashboard";
-import Transact from "../screens/Dashboard/Transact";
-import Loan from "../screens/Dashboard/Loan";
-import LoanApply from "../screens/Dashboard/LoanApply";
-import LoanRepay from "../screens/Dashboard/LoanRepay";
-import Trade from "../screens/Dashboard/Trade";
-import Acount from "../screens/Admin/Acount";
-import Loan from "../screens/Admin/Loan";
+import CreateAccount from "../screens/account/CreateAccount";
+import KYC from "../screens/account/KYC";
+import Dashboard from "../screens/dashboard/Dashboard";
+import Transact from "../screens/dashboard/Transact";
+import Loan from "../screens/dashboard/Loan";
+import LoanApply from "../screens/dashboard/LoanApply";
+import LoanRepay from "../screens/dashboard/LoanRepay";
+import Trade from "../screens/dashboard/Trade";
+import ApproveAcount from "../screens/admin/Acount";
+import ApproveLoan from "../screens/admin/Loan";
 
 export const routes = createBrowserRouter([
   {
@@ -55,10 +55,10 @@ export const routes = createBrowserRouter([
   },
   {
     path: "/admin/approve-acount",
-    element: <Acount />,
+    element: <ApproveAcount />,
   },
   {
     path: "/admin/approve-acount",
-    element: <Loan />,
+    element: <ApproveLoan />,
   },
 ]);
