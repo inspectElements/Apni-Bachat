@@ -22,12 +22,6 @@ let financialData = {
         loanTenure: 36,
         repaymentStatus: "on_time",
       },
-      {
-        loanType: "Home Loan",
-        loanAmount: 500000,
-        loanTenure: 60,
-        repaymentStatus: "delayed",
-      },
     ],
   },
 };
@@ -79,5 +73,75 @@ describe("CredibilityScore", function () {
     expect(financialDataFromContract[0][2]).to.equal(
       personalInformationJson.panNumber
     );
+  });
+
+  it("should add employment information", async () => {
+    const employmentInformationJson = financialData.employmentInformation[0];
+
+    // Add employment information
+    await credibilityScore
+      .connect(authorized)
+      .addEmploymentInformation(pan, employmentInformationJson);
+
+    // Retrieve the employment information from the contract
+    const financialDataFromContract = await credibilityScore
+      .connect(authorized)
+      .getFinancialData(pan);
+
+    // Verify that the information is correct
+    expect(financialDataFromContract[1][0][0]).to.equal(
+      employmentInformationJson.employerName
+    );
+    expect(financialDataFromContract[1][0][1]).to.equal(
+      employmentInformationJson.occupation
+    );
+    expect(financialDataFromContract[1][0][2]).to.equal(
+      employmentInformationJson.incomePerYear
+    );
+    expect(financialDataFromContract[1][0][3]).to.equal(
+      employmentInformationJson.startTime
+    );
+    expect(financialDataFromContract[1][0][4]).to.equal(
+      employmentInformationJson.endTime
+    );
+  });
+
+  it("should add loan repayment history", async () => {
+    const loanRepaymentHistoryJson =
+      financialData.creditHistory.loanRepaymentHistory[0];
+
+    // Add loan repayment information
+    await credibilityScore
+      .connect(authorized)
+      .addLoanRepaymentHistory(pan, loanRepaymentHistoryJson);
+
+    // Retrieve the loan repayment information from the contract
+    const financialDataFromContract = await credibilityScore
+      .connect(authorized)
+      .getFinancialData(pan);
+
+    const loanRepaymentHistoryFromContract = financialDataFromContract[2][0][0];
+
+    // Verify that the information is correct
+    expect(loanRepaymentHistoryFromContract[0]).to.equal(
+      loanRepaymentHistoryJson.loanType
+    );
+    expect(loanRepaymentHistoryFromContract[1]).to.equal(
+      loanRepaymentHistoryJson.loanAmount
+    );
+    expect(loanRepaymentHistoryFromContract[2]).to.equal(
+      loanRepaymentHistoryJson.loanTenure
+    );
+    expect(loanRepaymentHistoryFromContract[3]).to.equal(
+      loanRepaymentHistoryJson.repaymentStatus
+    );
+  });
+
+  it("should calculate credit score", async () => {
+    const creditScore = await credibilityScore
+      .connect(authorized)
+      .calculateCreditScore(pan);
+
+    console.log(creditScore);
   });
 });

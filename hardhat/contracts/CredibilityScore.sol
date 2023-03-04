@@ -88,6 +88,23 @@ contract CredibilityScore {
         financialData.personalInformation = personalInformation;
     }
 
+    function addEmploymentInformation(
+        string memory panNumber,
+        EmploymentInformation memory employmentInformation
+    ) public {
+        FinancialData storage financialData = financialDataMap[panNumber];
+        financialData.employmentInformation.push(employmentInformation);
+    }
+
+    function addLoanRepaymentHistory(
+        string memory panNumber,
+        LoanRepaymentHistory memory loanRepaymentHistory
+    ) public {
+        FinancialData storage financialData = financialDataMap[panNumber];
+        financialData.creditHistory.loanRepaymentHistory.push(
+            loanRepaymentHistory
+        );
+    }
 
     function getFinancialData(
         string memory panNumber
@@ -106,6 +123,64 @@ contract CredibilityScore {
             financialData.employmentInformation,
             financialData.creditHistory
         );
+    }
+
+
+    function calculateCreditScore(
+        string memory pan
+    ) public view returns (uint256) {
+        FinancialData memory data = financialDataMap[pan];
+
+        EmploymentInformation[] memory employmentInfo = data
+            .employmentInformation;
+        LoanRepaymentHistory[] memory loanHistory = data
+            .creditHistory
+            .loanRepaymentHistory;
+
+        uint256 incomeDelta = 0;
+
+        // Calculate score based on employment information
+        if (employmentInfo[0].incomePerYear >= 500000) {
+            incomeDelta += 250;
+        } else if (employmentInfo[0].incomePerYear >= 250000) {
+            incomeDelta += 100;
+        } else if (employmentInfo[0].incomePerYear >= 100000) {
+            incomeDelta += 50;
+        }
+
+        uint256 score = 0;
+        uint256 totalLoanAmount = 0;
+
+        // Calculate score based on loan repayment history
+        for (uint256 i = 0; i < loanHistory.length; i++) {
+            totalLoanAmount += loanHistory[i].loanAmount;
+            if (
+                keccak256(bytes(loanHistory[i].repaymentStatus)) ==
+                keccak256(bytes("on_time"))
+            ) {
+                score += 3 * loanHistory[i].loanAmount;
+            } else if (
+                keccak256(bytes(loanHistory[i].repaymentStatus)) ==
+                keccak256(bytes("semi_delayed"))
+            ) {
+                score += 2 * loanHistory[i].loanAmount;
+            } else if (
+                keccak256(bytes(loanHistory[i].repaymentStatus)) ==
+                keccak256(bytes("delayed"))
+            ) {
+                score += 1 * loanHistory[i].loanAmount;
+            }
+        }
+
+        uint256 creditScore = 0;
+        if (score == 0) {
+            creditScore = 500;
+        } else {
+            creditScore = ((score * 600) / (3 * totalLoanAmount)) + incomeDelta;
+        }
+
+        // Return the final credit score
+        return creditScore;
     }
 
 }
