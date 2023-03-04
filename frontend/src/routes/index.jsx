@@ -6,6 +6,7 @@ import Update from "../screens/account/Update";
 import KYC from "../screens/account/KYC";
 import Dashboard from "../screens/dashboard/Dashboard";
 import Transact from "../screens/dashboard/Transact";
+import Transfer from "../screens/dashboard/Transfer";
 import Loan from "../screens/dashboard/Loan";
 import LoanApply from "../screens/dashboard/LoanApply";
 import LoanRepay from "../screens/dashboard/LoanRepay";
@@ -41,6 +42,10 @@ export const routes = createBrowserRouter([
   {
     path: "/dashboard/transact",
     element: <Transact />,
+  },
+  {
+    path: "/dashboard/transfer",
+    element: <Transfer />,
   },
   {
     path: "/dashboard/loan",
