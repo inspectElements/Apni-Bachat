@@ -15,6 +15,7 @@ import { arcanaProvider } from "../../index";
 import CustomizedDialogs from "../../components/CustomizedDialogs";
 
 import { providers, Contract, utils } from "ethers";
+import { useNavigate } from "react-router-dom";
 
 const RequestItem = (props) => {
   console.log(props);
@@ -52,6 +53,7 @@ const style = {
   p: 4,
 };
 function Loan() {
+  const navigate = useNavigate();
   const provider = new providers.Web3Provider(arcanaProvider.provider);
   // get the end user
   const signer = provider.getSigner();
@@ -76,9 +78,9 @@ function Loan() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpenAccept = () => setOpenAccept(true);
-  const handleCloseAccept = () => setOpenAccept(false);
+  const handleCloseAccept = () => navigate(0);
   const handleOpenRejected = () => setOpenRejected(true);
-  const handleCloseRejected = () => setOpenRejected(false);
+  const handleCloseRejected = () => navigate(0);
   const [data, setData] = React.useState();
   const [id, setId] = React.useState();
   const [borrower, setBorrower] = React.useState();
@@ -142,6 +144,7 @@ function Loan() {
       });
     } else {
       await rejectLoanRequest();
+      handleOpenRejected();
     }
     return;
   };
@@ -214,9 +217,14 @@ function Loan() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} className="relative">
-          <img src="https://png.pngtree.com/png-vector/20210414/ourmid/pngtree-red-cross-vector-icon-no-symbol-rejected-cancel-negative-sign-deny-png-image_3216548.jpg" alt="rejected" />
+          <img
+            src="https://png.pngtree.com/png-vector/20210414/ourmid/pngtree-red-cross-vector-icon-no-symbol-rejected-cancel-negative-sign-deny-png-image_3216548.jpg"
+            alt="rejected"
+          />
           <div className="w-full flex justify-center items-start">
-            <Button onClick={handleCloseRejected} variant="contained">Ok</Button>
+            <Button onClick={handleCloseRejected} variant="contained">
+              Ok
+            </Button>
           </div>
         </Box>
       </Modal>
