@@ -1,7 +1,9 @@
 import React from "react";
 import { Typography, TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const CreateAccount = () => {
+  const navigate = useNavigate();
   return (
     <>
       <div className="m-14">
@@ -118,10 +120,20 @@ const CreateAccount = () => {
       </div>
       <div className="flex flex-col justify-center items-center m-20">
         <Button variant="contained" sx={{
+          disableRipple: true,
           width: "85vw",
-          backgroundColor: "#3b82f680",
+          background: "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
           height: "50px",
-        }}>
+          color: "#000",
+          border: "2px solid #000",
+          borderRadius: "10px",
+          fontFamily: "Poppins, sans-serif",
+          fontWeight: "bold",
+          fontSize: "1.2rem",
+          textTransform: "none",
+        }}
+        onClick={() => navigate(`/home`)}
+        >
           Complete
         </Button>
       </div>

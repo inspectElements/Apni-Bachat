@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Login from "../screens/home/Login";
 import Home from "../screens/home/Home";
 import CreateAccount from "../screens/account/CreateAccount";
+import Update from "../screens/account/Update";
 import KYC from "../screens/account/KYC";
 import Dashboard from "../screens/dashboard/Dashboard";
 import Transact from "../screens/dashboard/Transact";
@@ -24,6 +25,10 @@ export const routes = createBrowserRouter([
   {
     path: "/home",
     element: <Home />,
+  },
+  {
+    path: "/update",
+    element: <Update />,
   },
   {
     path: "/kyc",
