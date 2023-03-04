@@ -135,6 +135,7 @@ const Transact = () => {
 
   const withdraw = async () => {
     if (!withMoney) return;
+    if(data[0].balance<withMoney) return alert("Insufficient Balance");
     setLoading(true);
 
     setModal(true);
@@ -225,7 +226,7 @@ const Transact = () => {
             Deposit and Withdraw Money now
           </p>
         </div>
-        <div className="flex flex-col gap-5 justify-center items-center">
+        <div className="flex flex-col gap-5 justify-center items-center pb-15">
           <Card title={`Balance: ${(data && data[0]?.balance) || 0}`} />
           <Card title="Deposit">
             <TextField

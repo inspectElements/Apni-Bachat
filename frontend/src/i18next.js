@@ -9,6 +9,10 @@ const resources = {
       "trade" : "Trade",
       "hi": "Hi",
       "welcome to": "Welcome to अपनी Bachat",
+      "credibility score": "Credibility Score",
+      "check payments": "Check Payments",
+      "my accounts": "My Accounts",
+      "account age": "Account Age",
     },
   },
   hi: {
@@ -19,6 +23,10 @@ const resources = {
       "trade" : "व्यापार",
       "hi": "नमस्ते",
       "welcome to": "अपनी बचत में आपका स्वागत है",
+      "credibility score": "विश्वसनीयता स्कोर",
+      "check payments": "भुगतान जांचें",
+      "my accounts": "मेरे खाते",
+      "account age": "खाते की उम्र",
     },
   },
 };

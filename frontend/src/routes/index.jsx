@@ -16,10 +16,11 @@ import Trade from "../screens/dashboard/Trade";
 import ApproveLoan from "../screens/admin/Loan";
 import Account from "../screens/admin/Account";
 import Credit from "../screens/credit/Credit";
+import Score from "../screens/credit/Score";
 import Payments from "../screens/credit/Payments";
 import Age from "../screens/credit/Age";
 import CreditUse from "../screens/credit/CreditUse";
-import Enquiry from "../screens/credit/Enquiry";
+import Accounts from "../screens/credit/Accounts";
 
 export const routes = createBrowserRouter([
   {
@@ -91,6 +92,10 @@ export const routes = createBrowserRouter([
     element: <Credit />,
   },
   {
+    path: "/credit/score",
+    element: <Score />,
+  },
+  {
     path: "/credit/payments",
     element: <Payments />,
   },
@@ -103,8 +108,8 @@ export const routes = createBrowserRouter([
     element: <CreditUse />,
   },
   {
-    path: "/credit/enquiry",
-    element: <Enquiry />,
+    path: "/credit/accounts",
+    element: <Accounts />,
   },
 
 ]);
