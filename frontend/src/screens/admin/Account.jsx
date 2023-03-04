@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Modal, Typography } from "@mui/material";
+import { Box, Button, Modal, Typography, CircularProgress } from "@mui/material";
 import Sidebar from "./Sidebar";
 import {
   collection,
@@ -51,19 +51,7 @@ const RequestItem = (props) => {
     </div>
   );
 };
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
 function Account() {
-  const [open, setOpen] = React.useState(false);
   const auth = useAuth();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState();
@@ -96,15 +84,27 @@ function Account() {
     setData(data.filter((item) => item.id !== id));
   }
   return (
+    <>
+    {loading &&
+      <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
+        <CircularProgress/>
+      </div>
+    }
     <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
       <Sidebar />
 
       <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2 overflow-y-auto">
+        {(!data  || data.length===0) && 
+        <div className="w-[90%] bg-white shadow-lg p-5">
+          <h1 className="m-auto w-fit">No requests</h1>
+        </div>
+        }
         {data?.map((item) => (
           <RequestItem approve={approve} {...item} />
-        ))}
+          ))}
       </div>
     </Box>
+    </>
   );
 }
 
