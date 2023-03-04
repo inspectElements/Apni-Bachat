@@ -15,6 +15,7 @@ import { apniBachatConractAddress } from "../../constants";
 import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
 import { arcanaProvider } from "../../index";
 import CustomizedDialogs from "../../components/CustomizedDialogs";
+import { useNavigate } from "react-router-dom";
 
 const Card = (props) => {
   return (
