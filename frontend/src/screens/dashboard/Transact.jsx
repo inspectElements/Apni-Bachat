@@ -79,11 +79,11 @@ const Transact = () => {
     let docRef = await getDocs(collection(db, "user"));
     let r = {};
     docRef.forEach((doc) => {
-      if (doc.data().uid == auth.user.address)
+      if (doc.data().uid === auth.user.address)
       r = { id: doc.id, amount: doc.data().balance };
     });
     await updateDoc(doc(db, "user", r.id), {
-      balance: parseInt(parseInt(r.amount) + parseInt(depMoney)),
+      balance: parseFloat(parseInt(r.amount) + parseFloat(depMoney)),
     });
     setLoading(false);
   };

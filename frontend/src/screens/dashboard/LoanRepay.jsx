@@ -35,7 +35,7 @@ const Card = (props) => {
       );
     }
     if (props.data.loan[parseInt(props.title) - 1].periodRemaining === 0) {
-      props.data.loan[parseInt(props.title) - 1].paid = true;
+      props.data.loan[parseInt(props.title) - 1].status = 'paid';
     }
     await updateDoc(doc(db, "user", props.data.id), {
       loan: props.data.loan,
@@ -183,7 +183,7 @@ const LoanRepay = () => {
             data.loan.map((item, index) => {
               return (
                 <>
-                  {(item.approved && !item.paid) && (
+                  {(item.status === 'approved') && (
                     <Card
                       title={index + 1}
                       due={item.periodRemaining || item.loanPeriod}

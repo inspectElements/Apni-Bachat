@@ -100,16 +100,15 @@ const LoanApply = () => {
       let r = {};
       docRef.forEach((doc) => {
         if (doc.data().uid == auth.user.address)
-          r = { id: doc.id, loan: doc.data().loansApplied };
+          r = { id: doc.id, loan: doc.data().loan };
       });
-      r.loan = r.loan || [];
       const loan = {
         principal: parseFloat(principal),
         interestRate: parseFloat(interestRate),
         loanPeriod: parseInt(loanPeriod),
         monthlyPayment: parseFloat(monthlyPayment),
         collateral: url,
-        approved: false,
+        status: 'applied',
         borrower: auth.user.address,
       };
       r.loan.push(loan)
@@ -117,6 +116,7 @@ const LoanApply = () => {
         loan: r.loan,
       });
       setLoading(false);
+      navigate("/dashboard/loan/status");
     }
   };
   return (
