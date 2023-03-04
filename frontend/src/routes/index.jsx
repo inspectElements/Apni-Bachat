@@ -15,6 +15,11 @@ import LoanRepay from "../screens/dashboard/LoanRepay";
 import Trade from "../screens/dashboard/Trade";
 import ApproveLoan from "../screens/admin/Loan";
 import Account from "../screens/admin/Account";
+import Credit from "../screens/credit/Credit";
+import Payments from "../screens/credit/Payments";
+import Age from "../screens/credit/Age";
+import CreditUse from "../screens/credit/CreditUse";
+import Enquiry from "../screens/credit/Enquiry";
 
 export const routes = createBrowserRouter([
   {
@@ -81,4 +86,25 @@ export const routes = createBrowserRouter([
     path: "/admin/approve-loan",
     element: <ApproveLoan />,
   },
+  {
+    path: "/credit",
+    element: <Credit />,
+  },
+  {
+    path: "/credit/payments",
+    element: <Payments />,
+  },
+  {
+    path: "/credit/age",
+    element: <Age />,
+  },
+  {
+    path: "/credit/use",
+    element: <CreditUse />,
+  },
+  {
+    path: "/credit/enquiry",
+    element: <Enquiry />,
+  },
+
 ]);
