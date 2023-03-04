@@ -1,14 +1,16 @@
 import React from "react";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import Sidebar from "./Sidebar";
+import { collection, doc, getDocs } from "firebase/firestore";
+import { db } from "../../configs/firebase";
 
 const RequestItem = (props) => {
   return (
     <div className="w-[90%] bg-white shadow-lg">
       <div className="w-full flex justify-between p-5">
         <div>
-          <h1>Loan id: 12</h1>
-          <h3>Loan amount: 4000</h3>
+          <h1>Loan id: {props.id}</h1>
+          <h3>Loan amount: {props.principal}</h3>
         </div>
         <Button variant="contained" onClick={props.handleOpen}>
           Approve
@@ -32,6 +34,18 @@ function Loan() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [data, setData] = React.useState();
+  React.useEffect(() => {
+    let r = [];
+    getDocs(collection(db, "user")).then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        doc.data().loan.forEach((item) => {
+          if (item.status == "applied") r.push(item);
+        });
+      });
+      setData(r);
+    });
+  }, []);
   return (
     <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
       <Modal
@@ -41,7 +55,10 @@ function Loan() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <img src="https://t4.ftcdn.net/jpg/03/21/80/19/360_F_321801932_i0XO5LAnSNpKnMxeF4OijfIrOEC9aEB8.jpg" alt="meter"/>
+          <img
+            src="https://t4.ftcdn.net/jpg/03/21/80/19/360_F_321801932_i0XO5LAnSNpKnMxeF4OijfIrOEC9aEB8.jpg"
+            alt="meter"
+          />
           <Typography
             id="modal-modal-title"
             variant="h6"
@@ -59,9 +76,9 @@ function Loan() {
       <Sidebar />
 
       <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2">
-        <RequestItem handleOpen={handleOpen} />
-        <RequestItem handleOpen={handleOpen} />
-        <RequestItem handleOpen={handleOpen} />
+        {data?.map((item, index) => (
+          <RequestItem handleOpen={handleOpen} {...item} id={index} />
+        ))}
       </div>
     </Box>
   );
