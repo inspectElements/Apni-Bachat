@@ -55,15 +55,15 @@ const Card = (props) => {
 const Home = () => {
   return (
     <>
-      <div className="container pt-10 h-[100vh]">
+      <div className="container pt-10 overflow-hidden">
         <Typography
-          variant="h3"
-          component="h2"
+          variant="h4"
           color="primary.contrastText"
           sx={{
+            fontSize: "2.7rem",
             fontWeight: "bold",
             textAlign: "center",
-            mt: "35vh",
+            mt: "20vh",
             mb: 2.5,
             textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
             fontFamily: "Poppins, sans-serif",
@@ -91,6 +91,7 @@ const Home = () => {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-5 mt-10">
           <Card title="My Khata" route="dashboard" />
           <Card title="My Score" route="route" />
+          <Card title="Update Documents" route="update" />
         </div>
       </div>
     </>
