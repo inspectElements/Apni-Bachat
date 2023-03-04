@@ -6,7 +6,8 @@ const Update = () => {
   const navigate = useNavigate();
   return (
     <>
-      <div className="mt-20 mb-14">
+    <div className="bg min-h-[100vh]">
+      <div className="pt-20 pb-14">
       <div className="absolute inset-0 mt-5 ml-5">
       <svg
             className="w-7"
@@ -96,7 +97,7 @@ const Update = () => {
           type="file"
         />
       </div>
-      <div className="flex flex-col justify-center items-center m-20">
+      <div className="flex flex-col justify-center items-center p-20">
         <Button
           variant="contained"
           sx={{
@@ -117,6 +118,7 @@ const Update = () => {
         >
           Complete
         </Button>
+      </div>
       </div>
     </>
   );

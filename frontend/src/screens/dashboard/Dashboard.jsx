@@ -56,6 +56,7 @@ const Card = (props) => {
 const Dashboard = () => {
   return (
     <>
+    <div className="bg">
       <div className="pt-10 h-[100vh]">
       <div className="absolute inset-0 mt-5 ml-5">
       <svg
@@ -97,9 +98,11 @@ const Dashboard = () => {
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-7 mt-10">
           <Card title="Transact" route="transact" />
+          <Card title="Transfer" route="transfer" />
           <Card title="Loan" route="loan" />
           <Card title="Trade" route="trade" />
         </div>
+      </div>
       </div>
     </>
   );

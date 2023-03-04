@@ -72,7 +72,8 @@ const CreateAccount = () => {
         <CircularProgress/>
       </div>
     }
-      <div className="m-14">
+    <div className="bg"></div>
+      <div className="p-14">
         <Typography
           variant="h4"
           sx={{
