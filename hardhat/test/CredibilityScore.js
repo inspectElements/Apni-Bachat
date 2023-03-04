@@ -20,6 +20,7 @@ let financialData = {
         loanType: "Personal Loan",
         loanAmount: 200000,
         loanTenure: 36,
+        interestRate: 10,
         repaymentStatus: "on_time",
       },
     ],
@@ -133,6 +134,9 @@ describe("CredibilityScore", function () {
       loanRepaymentHistoryJson.loanTenure
     );
     expect(loanRepaymentHistoryFromContract[3]).to.equal(
+      loanRepaymentHistoryJson.interestRate
+    );
+    expect(loanRepaymentHistoryFromContract[4]).to.equal(
       loanRepaymentHistoryJson.repaymentStatus
     );
   });

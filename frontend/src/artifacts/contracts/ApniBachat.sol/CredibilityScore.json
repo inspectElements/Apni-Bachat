@@ -63,6 +63,11 @@
               "type": "uint256"
             },
             {
+              "internalType": "uint256",
+              "name": "interestRate",
+              "type": "uint256"
+            },
+            {
               "internalType": "string",
               "name": "repaymentStatus",
               "type": "string"

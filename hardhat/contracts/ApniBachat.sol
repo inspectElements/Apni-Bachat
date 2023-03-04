@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 struct Loan {
     string loanType;
     uint256 loanAmount;
     uint256 loanTenure;
+    uint256 interestRate;
     string repaymentStatus;
 }
 
@@ -73,8 +74,6 @@ contract ApniBachat {
     ) public {
         enrolled[panNumber] = true;
         users[panNumber] = personalInformation;
-
-        console.log(panNumber);
 
         credibilityScoreContract.addPersonalInformation(panNumber, personalInformation);
         credibilityScoreContract.addEmploymentInformation(panNumber, employmentInformation);
