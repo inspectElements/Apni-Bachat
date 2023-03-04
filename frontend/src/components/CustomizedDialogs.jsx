@@ -57,7 +57,7 @@ export default function CustomizedDialogs(props) {
           onClose={handleClose}
         >
           <Typography sx={{ textAlign: "center", mb: 4 }} variant="h4">
-            Minting NFT
+            Interacting with blockchain
           </Typography>
         </BootstrapDialogTitle>
         <DialogContent>

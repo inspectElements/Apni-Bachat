@@ -1,16 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import Sidebar from "./Sidebar";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import { db } from "../../configs/firebase";
+
+import { useAuth } from "@arcana/auth-react";
+import { providers, Contract } from "ethers";
+import {
+  apniBachatConractAddress,
+  credibilityScoreConractAddress,
+} from "../../constants";
+import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
+import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/CredibilityScore.json";
+import { arcanaProvider } from "../../index";
+import CustomizedDialogs from "../../components/CustomizedDialogs";
 
 const RequestItem = (props) => {
+  console.log(props)
   return (
     <div className="w-[90%] bg-white shadow-lg">
       <div className="w-full flex justify-between p-5">
         <div>
-          <h1>Loan id: 12</h1>
-          <h3>Loan amount: 4000</h3>
+          <h1>Loan id: {props.index}</h1>
+          <h3>Loan amount: {props.principal}</h3>
         </div>
-        <Button variant="contained" onClick={props.handleOpen}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            props.setPan(props.pan);
+            props.handleOpen();
+            props.setId(props.id);
+            props.setBorrower(props.borrower);
+          }}
+        >
           Approve
         </Button>
       </div>
@@ -29,9 +51,86 @@ const style = {
   p: 4,
 };
 function Loan() {
+  const provider = new providers.Web3Provider(arcanaProvider.provider);
+  // get the end user
+  const signer = provider.getSigner();
+  // get the smart contract
+  const contract = new Contract(
+    credibilityScoreConractAddress,
+    CredibilityScore.abi,
+    signer
+  );
+
+  const [panCard, setPanCard] = useState("");
+
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [data, setData] = React.useState();
+  const [id, setId] = React.useState();
+  const [borrower, setBorrower] = React.useState();
+
+  const [parsedCreditScore, setParsedCreditScore] = React.useState(null);
+
+  React.useEffect(() => {
+    let r = [];
+    getDocs(collection(db, "user")).then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        doc.data().loan.forEach((item) => {
+          if (item.status === "applied") {
+            item["pan"] = doc.data().pan;
+            r.push(item);
+          }
+        });
+      });
+      setData(r);
+    });
+  }, []);
+
+  const fetchCreditScore = async () => {
+    console.log("approve", panCard);
+
+    if (!panCard?.length > 0) return;
+
+    const creditScore = await contract.calculateCreditScore(panCard);
+    const _parsedCreditScore = parseInt(creditScore._hex.substring(2), 16);
+    setParsedCreditScore(_parsedCreditScore);
+  };
+  const approveOnClick = async () => {};
+
+  const getScore = (credit) => {
+    if (credit < 300) {
+      return 1;
+    } else if (credit < 700) {
+      return 2;
+    } else {
+      return 3;
+    }
+  };
+  const rejectLoanRequest = async () => {
+    let r = {};
+    await getDocs(collection(db, "user")).then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.data().uid === borrower) {
+          r["id"] = doc.id;
+          r["loan"] = [];
+          doc.data().loan.forEach((item) => {
+            console.log(item.id, id);
+            if (item.id === id) {
+              item.status = "rejected";
+            }
+            r["loan"].push(item);
+          });
+        }
+      });
+    });
+    console.log(r);
+    await updateDoc(doc(db, "user", r.id), {
+      loan: r.loan,
+    }).then(() => {
+      console.log("Document successfully updated!");
+    });
+  };
   return (
     <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
       <Modal
@@ -40,28 +139,39 @@ function Loan() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <img src="https://t4.ftcdn.net/jpg/03/21/80/19/360_F_321801932_i0XO5LAnSNpKnMxeF4OijfIrOEC9aEB8.jpg" alt="meter"/>
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            className="text-center"
-          >
-            Credit Score: 52
-          </Typography>
+        <Box sx={style} className="relative">
+          <img src={`/meter${getScore(parsedCreditScore)}.png`} alt="meter" />
+          {parsedCreditScore !== null && (
+            <Typography
+              id="modal-modal-title"
+              variant="h2"
+              component="h2"
+              className="text-center"
+              style={{ position: "absolute", top: "40%", left: "38%" }}
+            >
+              {parsedCreditScore}
+            </Typography>
+          )}
           <div className="w-full flex justify-center items-start">
-            <Button>approve</Button>
-            <Button>reject</Button>
+            <Button onClick={fetchCreditScore}>fetch</Button>
+            <Button onClick={approveOnClick}>approve</Button>
+            <Button onClick={rejectLoanRequest}>reject</Button>
           </div>
         </Box>
       </Modal>
       <Sidebar />
 
       <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2">
-        <RequestItem handleOpen={handleOpen} />
-        <RequestItem handleOpen={handleOpen} />
-        <RequestItem handleOpen={handleOpen} />
+        {data?.map((item, index) => (
+          <RequestItem
+            handleOpen={handleOpen}
+            setPan={setPanCard}
+            setId={setId}
+            setBorrower={setBorrower}
+            {...item}
+            index={index}
+          />
+        ))}
       </div>
     </Box>
   );
