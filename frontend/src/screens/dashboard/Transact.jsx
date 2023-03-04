@@ -135,7 +135,7 @@ const Transact = () => {
 
   const withdraw = async () => {
     if (!withMoney) return;
-    if(data[0].balance<withMoney) return alert("Insufficient Balance");
+    if (data[0].balance < withMoney) return alert("Insufficient Balance");
     setLoading(true);
 
     setModal(true);

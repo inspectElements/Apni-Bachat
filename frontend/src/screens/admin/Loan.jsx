@@ -3,8 +3,6 @@ import { Box, Button, Modal, Typography } from "@mui/material";
 import Sidebar from "./Sidebar";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
-
-import { useAuth } from "@arcana/auth-react";
 import {
   apniBachatConractAddress,
   credibilityScoreConractAddress,
@@ -12,13 +10,10 @@ import {
 import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
 import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/CredibilityScore.json";
 import { arcanaProvider } from "../../index";
-import CustomizedDialogs from "../../components/CustomizedDialogs";
-
-import { providers, Contract, utils } from "ethers";
+import { providers, Contract } from "ethers";
 import { useNavigate } from "react-router-dom";
 
 const RequestItem = (props) => {
-  console.log(props);
   return (
     <div className="w-[90%] bg-white shadow-lg">
       <div className="w-full flex justify-between p-5">
@@ -124,12 +119,12 @@ function Loan() {
         querySnapshot.forEach((doc) => {
           if (doc.data().uid === borrower) {
             r["id"] = doc.id;
-            r['balance'] = doc.data().balance;
+            r["balance"] = doc.data().balance;
             r["loan"] = [];
             doc.data().loan.forEach((item) => {
               console.log(item.id, id);
               if (item.id === id) {
-                r['balance'] = r['balance'] + item.principal;
+                r["balance"] = r["balance"] + item.principal;
                 item.status = "approved";
               }
               r["loan"].push(item);
@@ -224,7 +219,9 @@ function Loan() {
             src="https://png.pngtree.com/png-vector/20211016/ourmid/pngtree-rejected-icon-design-rounded-shape-png-image_3988333.png"
             alt="rejected"
           />
-          <h2 className="text-center font-bold my-3">Contract rejected the loan due to bad credibility</h2>
+          <h2 className="text-center font-bold my-3">
+            Contract rejected the loan due to bad credibility
+          </h2>
           <div className="w-full flex justify-center items-start">
             <Button onClick={handleCloseRejected} variant="contained">
               Ok
@@ -239,13 +236,15 @@ function Loan() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} className="relative">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/2143/2143150.png"
-            alt="approved"
-          />
+          <iframe
+            src="https://giphy.com/embed/YlSR3n9yZrxfgVzagm"
+            class="giphy-embed"
+            allowFullScreen
+            className="w-full h-96"
+          ></iframe>
           <div className="w-full flex justify-center items-start">
-            <Button onClick={handleCloseAccept} variant="contained">
-              OKII
+            <Button onClick={handleCloseAccept} variant="outlined" fullWidth>
+              OK
             </Button>
           </div>
         </Box>
