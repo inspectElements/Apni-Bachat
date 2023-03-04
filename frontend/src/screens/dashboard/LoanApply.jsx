@@ -110,6 +110,7 @@ const LoanApply = () => {
         collateral: url,
         status: "applied",
         borrower: auth.user.address,
+        id: uuid(),
       };
       r.loan.push(loan);
       await updateDoc(doc(db, "user", r.id), {

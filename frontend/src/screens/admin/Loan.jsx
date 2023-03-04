@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import Sidebar from "./Sidebar";
-import { collection, doc, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 
 import { useAuth } from "@arcana/auth-react";
@@ -16,11 +16,12 @@ import { arcanaProvider } from "../../index";
 import CustomizedDialogs from "../../components/CustomizedDialogs";
 
 const RequestItem = (props) => {
+  console.log(props)
   return (
     <div className="w-[90%] bg-white shadow-lg">
       <div className="w-full flex justify-between p-5">
         <div>
-          <h1>Loan id: {props.id}</h1>
+          <h1>Loan id: {props.index}</h1>
           <h3>Loan amount: {props.principal}</h3>
         </div>
         <Button
@@ -28,6 +29,8 @@ const RequestItem = (props) => {
           onClick={() => {
             props.setPan(props.pan);
             props.handleOpen();
+            props.setId(props.id);
+            props.setBorrower(props.borrower);
           }}
         >
           Approve
@@ -64,6 +67,8 @@ function Loan() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [data, setData] = React.useState();
+  const [id, setId] = React.useState();
+  const [borrower, setBorrower] = React.useState();
 
   const [parsedCreditScore, setParsedCreditScore] = React.useState(null);
 
@@ -102,7 +107,30 @@ function Loan() {
       return 3;
     }
   };
-
+  const rejectLoanRequest = async () => {
+    let r = {};
+    await getDocs(collection(db, "user")).then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.data().uid === borrower) {
+          r["id"] = doc.id;
+          r["loan"] = [];
+          doc.data().loan.forEach((item) => {
+            console.log(item.id, id);
+            if (item.id === id) {
+              item.status = "rejected";
+            }
+            r["loan"].push(item);
+          });
+        }
+      });
+    });
+    console.log(r);
+    await updateDoc(doc(db, "user", r.id), {
+      loan: r.loan,
+    }).then(() => {
+      console.log("Document successfully updated!");
+    });
+  };
   return (
     <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
       <Modal
@@ -127,7 +155,7 @@ function Loan() {
           <div className="w-full flex justify-center items-start">
             <Button onClick={fetchCreditScore}>fetch</Button>
             <Button onClick={approveOnClick}>approve</Button>
-            <Button>reject</Button>
+            <Button onClick={rejectLoanRequest}>reject</Button>
           </div>
         </Box>
       </Modal>
@@ -138,8 +166,10 @@ function Loan() {
           <RequestItem
             handleOpen={handleOpen}
             setPan={setPanCard}
+            setId={setId}
+            setBorrower={setBorrower}
             {...item}
-            id={index}
+            index={index}
           />
         ))}
       </div>
