@@ -68,8 +68,6 @@ function Loan() {
   const [parsedCreditScore, setParsedCreditScore] = React.useState(null);
 
   React.useEffect(() => {
-    fetchCreditScore();
-
     let r = [];
     getDocs(collection(db, "user")).then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
@@ -87,13 +85,14 @@ function Loan() {
   const fetchCreditScore = async () => {
     console.log("approve", panCard);
 
-    await arcanaProvider.connect();
+    if (!panCard?.length > 0) return;
 
     const creditScore = await contract.calculateCreditScore(panCard);
     const _parsedCreditScore = parseInt(creditScore._hex.substring(2), 16);
     setParsedCreditScore(_parsedCreditScore);
   };
   const approveOnClick = async () => {};
+
   const getScore = (credit) => {
     if (credit < 300) {
       return 1;
@@ -103,6 +102,7 @@ function Loan() {
       return 3;
     }
   };
+
   return (
     <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
       <Modal
@@ -111,19 +111,21 @@ function Loan() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box sx={style} className="relative">
           <img src={`/meter${getScore(parsedCreditScore)}.png`} alt="meter" />
           {parsedCreditScore !== null && (
             <Typography
               id="modal-modal-title"
-              variant="h6"
+              variant="h2"
               component="h2"
               className="text-center"
+              style={{ position: "absolute", top: "40%", left: "38%" }}
             >
-              Credit Score: {parsedCreditScore}
+              {parsedCreditScore}
             </Typography>
           )}
           <div className="w-full flex justify-center items-start">
+            <Button onClick={fetchCreditScore}>fetch</Button>
             <Button onClick={approveOnClick}>approve</Button>
             <Button>reject</Button>
           </div>
