@@ -1,9 +1,17 @@
-import React from "react";
-import { Typography, TextField, Paper, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Typography, TextField, Paper, Button, CircularProgress } from "@mui/material";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../../configs/firebase";
+import { useAuth } from "@arcana/auth-react";
 
 const Card = (props) => {
-  const navigate = useNavigate();
   return (
     <>
       <Paper
@@ -41,9 +49,67 @@ const Card = (props) => {
 };
 
 const Transact = () => {
-  const navigate = useNavigate();
+  const auth = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [depMoney, setDepMoney] = useState(false);
+  const [withMoney, setWithMoney] = useState(false);
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    if (!auth.user) return;
+    const getProperties = async () => {
+      const snapshot = await getDocs(collection(db, "user"));
+      let tData = [];
+      snapshot.forEach((doc) => {
+        let temp = doc.data();
+        if (!temp.kyc_done) {
+          tData.push({ ...doc.data(), id: doc.id });
+        }
+      });
+      setData(tData);
+    };
+    getProperties();
+  }, [auth]);
+  useEffect(() => {
+    setLoading(true);
+    if (data) setLoading(false);
+  }, [data]);
+  const deposit = async () => {
+    if (!depMoney) return;
+    setLoading(true);
+    let docRef = await getDocs(collection(db, "user"));
+    let r = {};
+    docRef.forEach((doc) => {
+      if (doc.data().uid == auth.user.address)
+      r = { id: doc.id, amount: doc.data().balance };
+    });
+    await updateDoc(doc(db, "user", r.id), {
+      balance: parseInt(parseInt(r.amount) + parseInt(depMoney)),
+    });
+    setLoading(false);
+  };
+  const withdraw = async () => {
+    if (!withMoney) return;
+    setLoading(true);
+    let docRef = await getDocs(collection(db, "user"));
+    let r = {};
+    docRef.forEach((doc) => {
+      if (doc.data().uid == auth.user.address)
+        r = { id: doc.id, amount: doc.data().balance };
+    });
+    if (parseInt(r.amount) < parseInt(withMoney)) return;
+    await updateDoc(doc(db, "user", r.id), {
+      balance: parseInt(parseInt(r.amount) - parseInt(withMoney)),
+    });
+    setLoading(false);
+  };
   return (
     <>
+    {loading && (
+        <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
+          <CircularProgress />
+        </div>
+      )}
       <div className="bg min-h-[100vh]">
         <div className="pt-20 pb-14">
           <div className="absolute inset-0 mt-5 ml-5">
@@ -85,6 +151,7 @@ const Transact = () => {
               label="Amount"
               variant="outlined"
               sx={{ width: "95%", margin: "2rem", marginTop: "3rem" }}
+              onChange={(e) => setDepMoney(e.target.value)}
             />
             <Button
               variant="contained"
@@ -102,7 +169,7 @@ const Transact = () => {
                 fontSize: "1.2rem",
                 textTransform: "none",
               }}
-              onClick={() => navigate(`/dashboard`)}
+              onClick={() => deposit()}
             >
               Deposit
             </Button>
@@ -112,6 +179,7 @@ const Transact = () => {
               label="Amount"
               variant="outlined"
               sx={{ width: "95%", margin: "2rem", marginTop: "3rem" }}
+              onChange={(e) => setWithMoney(e.target.value)}
             />
             <Button
               variant="contained"
@@ -129,7 +197,7 @@ const Transact = () => {
                 fontSize: "1.2rem",
                 textTransform: "none",
               }}
-              onClick={() => navigate(`/dashboard`)}
+              onClick={() => withdraw()}
             >
               Withdraw
             </Button>

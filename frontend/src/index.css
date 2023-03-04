@@ -22,7 +22,7 @@ body {
 .bg {
   background-image: url("./assets/mainBG.png");
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-attachment: fixed;
   height: 100%;
