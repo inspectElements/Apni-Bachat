@@ -6,9 +6,9 @@ const Login = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1 style={{ textAlign: "center", marginBlock: "50px" }}>
-        Welcome to Apni Bachat
+    <div className="bg min-h-screen">
+      <h1 style={{ textAlign: "center", paddingTop: "100px", paddingBottom: "50px", fontSize: "1.75rem", fontWeight: "bold" }}>
+        अपनी Bachat
       </h1>
       <div>
         <Auth

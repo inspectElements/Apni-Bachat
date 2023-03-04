@@ -84,6 +84,7 @@ const CreateAccount = () => {
       navigate("/home");
     }
   };
+
   return (
     <>
       {loading && (
