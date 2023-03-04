@@ -108,10 +108,10 @@ const LoanApply = () => {
         loanPeriod: parseInt(loanPeriod),
         monthlyPayment: parseFloat(monthlyPayment),
         collateral: url,
-        status: 'applied',
+        status: "applied",
         borrower: auth.user.address,
       };
-      r.loan.push(loan)
+      r.loan.push(loan);
       await updateDoc(doc(db, "user", r.id), {
         loan: r.loan,
       });
