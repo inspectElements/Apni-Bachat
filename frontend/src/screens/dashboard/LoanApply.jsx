@@ -185,7 +185,7 @@ const LoanApply = () => {
                 textTransform: "none",
                 marginTop: "1rem",
               }}
-              onClick={() => navigate(`/dashboard`)}
+              onClick={() => navigate(`/dashboard/loan`)}
             >
               Deposit
             </Button>
