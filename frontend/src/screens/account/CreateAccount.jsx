@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, TextField, Button } from "@mui/material";
+import { Typography, TextField, Button, CircularProgress } from "@mui/material";
 import { useAuth } from "@arcana/auth-react";
 import { storage, db } from "../../configs/firebase";
 import { addDoc, collection } from "firebase/firestore";
@@ -62,11 +62,15 @@ const CreateAccount = () => {
       await addDoc(collection(db, "user"), data);
       setLoading(false);
       navigate("/home");
-      console.log("done");
     }
   };
   return (
     <>
+    {loading &&
+      <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
+        <CircularProgress/>
+      </div>
+    }
       <div className="m-14">
         <Typography
           variant="h4"
