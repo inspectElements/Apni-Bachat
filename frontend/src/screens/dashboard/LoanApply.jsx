@@ -25,7 +25,7 @@ function calculateEMI(principal, interestRate, loanPeriod) {
   const numerator =
     principal * interestRate * Math.pow(1 + interestRate, loanPeriod);
   const denominator = Math.pow(1 + interestRate, loanPeriod) - 1;
-  const monthlyPayment = (numerator / denominator).toFixed(2);
+  const monthlyPayment = (numerator / denominator);
 
   return monthlyPayment;
 }

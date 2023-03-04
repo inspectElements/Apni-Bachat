@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Paper, CircularProgress } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Paper,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@arcana/auth-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 import ChatIcon from "@mui/icons-material/Chat";
+import { useTranslation } from "react-i18next";
 
 const Card = (props) => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    i18n.changeLanguage("en");
+  }, []);
   return (
     <>
       <Paper
@@ -37,7 +51,7 @@ const Card = (props) => {
               fontFamily: "Poppins, sans-serif",
             }}
           >
-            {props.title}
+            {t(props.title)}
           </Typography>
           <svg
             style={{
@@ -59,8 +73,12 @@ const Card = (props) => {
 };
 
 const Dashboard = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   let auth = useAuth();
+  useEffect(() => {
+    i18n.changeLanguage("en");
+  }, []);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState();
   const [kyc, setKyc] = useState();
@@ -94,12 +112,17 @@ const Dashboard = () => {
   }, [data]);
   console.log(kyc);
   if (kyc === false) {
-    return <div className="w-screen h-screen flex justify-center items-center text-2xl bg font-bold">KYC under process</div>;
-  }
-  else if(kyc === undefined){
-    return <div className="w-screen h-screen flex justify-center items-center text-2xl bg font-bold">
-      <CircularProgress />
-    </div>;
+    return (
+      <div className="w-screen h-screen flex justify-center items-center text-2xl bg font-bold">
+        KYC under process
+      </div>
+    );
+  } else if (kyc === undefined) {
+    return (
+      <div className="w-screen h-screen flex justify-center items-center text-2xl bg font-bold">
+        <CircularProgress />
+      </div>
+    );
   }
   return (
     <>
@@ -115,7 +138,11 @@ const Dashboard = () => {
             >
               <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
             </svg>
-            <ChatIcon className="absolute top-0 right-0 mt-5 mr-5" sx={{fontSize: "1.75rem"}} onClick={() => navigate("/chat")}/>
+            <ChatIcon
+              className="absolute top-0 right-0 mt-5 mr-5"
+              sx={{ fontSize: "2rem" }}
+              onClick={() => navigate("/chat")}
+            />
           </div>
           <Typography
             variant="h4"
@@ -131,24 +158,61 @@ const Dashboard = () => {
               letterSpacing: "0.1rem",
             }}
           >
-            Hi, Eshan
+            {t("hi")}, Eshan
           </Typography>
           <p
             style={{
               fontSize: "1.25rem",
               textAlign: "center",
               color: "bold",
-              marginBottom: "5rem",
+              marginBottom: "2rem",
             }}
           >
-            Welcome to <span>अपनी Bachat</span>
+            {t("welcome to")}
           </p>
 
+          <div className="flex justify-center">
+            <FormControl
+              sx={{
+                width: "120px",
+              }}
+            >
+              <InputLabel
+                id="demo-simple-select-label"
+                sx={{
+                  fontSize: 16,
+                }}
+              >
+                Lang
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Lang"
+                defaultValue={"en"}
+                onChange={(e) => {
+                  i18n.changeLanguage(e.target.value);
+                }}
+                sx={{
+                  borderRadius: "15px",
+
+                  "& fieldset": {
+                    height: "50px",
+                    border: "2px solid gray",
+                  },
+                }}
+              >
+                <MenuItem value={"en"}>English</MenuItem>
+                <MenuItem value={"hi"}>Hindi</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+
           <div className="flex flex-col sm:flex-row justify-center items-center gap-7 mt-10">
-            <Card title="Transact" route="transact" />
-            <Card title="Transfer" route="transfer" />
-            <Card title="Loan" route="loan" />
-            <Card title="Trade" route="trade" />
+            <Card title="transact" route="transact" />
+            <Card title="transfer" route="transfer" />
+            <Card title="loan" route="loan" />
+            <Card title="trade" route="trade" />
           </div>
         </div>
       </div>
