@@ -99,7 +99,7 @@ const LoanApply = () => {
       let docRef = await getDocs(collection(db, "user"));
       let r = {};
       docRef.forEach((doc) => {
-        if (doc.data().uid == auth.user.address)
+        if (doc.data().uid === auth.user.address)
           r = { id: doc.id, loan: doc.data().loan };
       });
       const loan = {
