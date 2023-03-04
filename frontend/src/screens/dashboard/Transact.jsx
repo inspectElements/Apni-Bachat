@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Typography, TextField, Paper, Button, CircularProgress } from "@mui/material";
 import {
-  collection,
-  doc,
-  getDocs,
-  updateDoc,
-} from "firebase/firestore";
+  Typography,
+  TextField,
+  Paper,
+  Button,
+  CircularProgress,
+} from "@mui/material";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 import { useAuth } from "@arcana/auth-react";
+
+import { providers, Contract, utils } from "ethers";
+import { apniBachatConractAddress } from "../../constants";
+import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
+import { arcanaProvider } from "../../index";
+import CustomizedDialogs from "../../components/CustomizedDialogs";
 
 const Card = (props) => {
   return (
@@ -48,10 +55,24 @@ const Card = (props) => {
 };
 
 const Transact = () => {
+  const provider = new providers.Web3Provider(arcanaProvider.provider);
+  // get the end user
+  const signer = provider.getSigner();
+  // get the smart contract
+  const contract = new Contract(
+    apniBachatConractAddress,
+    ApniBachat.abi,
+    signer
+  );
+
+  const [modal, setModal] = useState(false);
+  const [stepCount, setStepCount] = useState(0);
+  const [error, setError] = useState(null);
+
   const auth = useAuth();
   const [loading, setLoading] = useState(false);
-  const [depMoney, setDepMoney] = useState(false);
-  const [withMoney, setWithMoney] = useState(false);
+  const [depMoney, setDepMoney] = useState("");
+  const [withMoney, setWithMoney] = useState("");
   const [data, setData] = useState();
 
   useEffect(() => {
@@ -69,24 +90,44 @@ const Transact = () => {
     };
     getProperties();
   }, [auth]);
+
   useEffect(() => {
     setLoading(true);
     if (data) setLoading(false);
   }, [data]);
+
   const deposit = async () => {
     if (!depMoney) return;
     setLoading(true);
+    setModal(true);
+
+    const amountInWei = utils.parseEther(depMoney.toString());
+
+    console.log("amountInWei", amountInWei);
+
     let docRef = await getDocs(collection(db, "user"));
     let r = {};
     docRef.forEach((doc) => {
       if (doc.data().uid == auth.user.address)
-      r = { id: doc.id, amount: doc.data().balance };
+        r = { id: doc.id, amount: doc.data().balance, pan: doc.data().pan };
     });
+
+    setStepCount((prev) => prev + 1);
+
+    await contract.deposit(r.pan, {
+      value: amountInWei,
+    });
+
     await updateDoc(doc(db, "user", r.id), {
-      balance: parseInt(parseInt(r.amount) + parseInt(depMoney)),
+      balance: parseFloat(parseFloat(r.amount) + parseFloat(depMoney)),
     });
+
+    setStepCount((prev) => prev + 1);
+    setDepMoney("");
+
     setLoading(false);
   };
+
   const withdraw = async () => {
     if (!withMoney) return;
     setLoading(true);
@@ -96,15 +137,28 @@ const Transact = () => {
       if (doc.data().uid == auth.user.address)
         r = { id: doc.id, amount: doc.data().balance };
     });
-    if (parseInt(r.amount) < parseInt(withMoney)) return;
+    if (parseFloat(r.amount) < parseFloat(withMoney)) return;
     await updateDoc(doc(db, "user", r.id), {
-      balance: parseInt(parseInt(r.amount) - parseInt(withMoney)),
+      balance: parseFloat(parseFloat(r.amount) - parseFloat(withMoney)),
     });
     setLoading(false);
   };
+
   return (
     <>
-    {loading && (
+      <CustomizedDialogs
+        open={modal}
+        setOpen={setModal}
+        stepCount={stepCount}
+        error={error}
+        steps={[
+          "Initiating contract interaction",
+          "Transacting with Apni Bachat smart contract",
+          "Success",
+        ]}
+      />
+
+      {loading && (
         <div className="fixed top-0 left-0 w-screen h-screen bg-[#2e2e2e69] z-50 flex justify-center items-center">
           <CircularProgress />
         </div>
@@ -149,6 +203,7 @@ const Transact = () => {
             <TextField
               label="Amount"
               variant="outlined"
+              value={depMoney}
               sx={{ width: "95%", margin: "2rem", marginTop: "3rem" }}
               onChange={(e) => setDepMoney(e.target.value)}
             />
@@ -177,6 +232,7 @@ const Transact = () => {
             <TextField
               label="Amount"
               variant="outlined"
+              value={withMoney}
               sx={{ width: "95%", margin: "2rem", marginTop: "3rem" }}
               onChange={(e) => setWithMoney(e.target.value)}
             />
