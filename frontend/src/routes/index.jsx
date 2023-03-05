@@ -21,6 +21,7 @@ import Payments from "../screens/credit/Payments";
 import Age from "../screens/credit/Age";
 import CreditUse from "../screens/credit/CreditUse";
 import Accounts from "../screens/credit/Accounts";
+import CreditInstitute from "../screens/creditinstitute/CreditInstitute";
 
 export const routes = createBrowserRouter([
   {
@@ -111,5 +112,8 @@ export const routes = createBrowserRouter([
     path: "/credit/accounts",
     element: <Accounts />,
   },
-
+  {
+    path: "/credit-institute",
+    element: <CreditInstitute />,
+  },
 ]);
