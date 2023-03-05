@@ -17,13 +17,18 @@ import { collection, doc, updateDoc, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import uuid from "react-uuid";
 
-function calculateEMI(principal, interestRate, loanPeriod) {
+function calculateMaturityValue(principal, interestRate, tenure) {
+  // convert interest rate to decimal
+  interestRate = interestRate / 100;
 
-  interestRate = interestRate / 100 / 12;
+  // calculate the total number of compounding periods
+  let n = 1 * tenure;
 
-  const amount = principal * interestRate * loanPeriod * 0.01 * 0.08 ;
+  // calculate the maturity value using the formula
+  let maturityValue = principal * Math.pow(1 + interestRate / 1, n);
 
-  const maturityValue = amount;
+  // round the maturity value to 2 decimal places
+  maturityValue = Math.round(maturityValue * 100) / 100;
 
   return maturityValue;
 }
@@ -73,50 +78,53 @@ const FD = () => {
   const [loading, setLoading] = React.useState(false);
   const [principal, setPrincipal] = React.useState(0);
   const [interestRate, setInterestRate] = React.useState(0);
-  const [loanPeriod, setLoanPeriod] = React.useState(0);
   const [monthlyPayment, setMonthlyPayment] = React.useState();
-  const [collatralImg, setCollatralImg] = React.useState(null);
+  let a = [
+    { month: 1, interest: 5 },
+    { month: 1.5, interest: 5.5 },
+    { month: 2, interest: 6 },
+    { month: 3, interest: 7.5 },
+    { month: 4, interest: 8 },
+  ];
   useEffect(() => {
-    if (principal && interestRate && loanPeriod)
-      setMonthlyPayment(
-        parseFloat(
-          calculateEMI(
-            parseFloat(principal),
-            parseFloat(interestRate),
-            parseFloat(loanPeriod)
-          )
+    if (principal && interestRate) console.log(principal, interestRate);
+    setMonthlyPayment(
+      parseFloat(
+        calculateMaturityValue(
+          parseFloat(principal),
+          parseFloat(a[interestRate].interest),
+          parseInt(a[interestRate].month)
         )
-      );
-  }, [principal, interestRate, loanPeriod]);
+      )
+    );
+  }, [principal, interestRate]);
   const applyLoan = async () => {
-    if (auth.user && collatralImg) {
+    if (auth.user) {
       setLoading(true);
-      const storageRef = ref(storage, `collateral/${uuid()}`);
-      let storageSnap = await uploadBytes(storageRef, collatralImg);
-      const url = await getDownloadURL(storageSnap.ref);
       let docRef = await getDocs(collection(db, "user"));
       let r = {};
       docRef.forEach((doc) => {
         if (doc.data().uid === auth.user.address)
-          r = { id: doc.id, loan: doc.data().loan };
+          r = { id: doc.id, fd: doc.data().fd, balance: doc.data().balance };
       });
-      const loan = {
-        principal: parseFloat(principal),
-        interestRate: parseFloat(interestRate),
-        loanPeriod: parseInt(loanPeriod),
-        monthlyPayment: parseFloat(monthlyPayment),
-        collateral: url,
-        status: "applied",
-        borrower: auth.user.address,
-        id: uuid(),
-        periodRemaining: parseInt(loanPeriod),
-      };
-      r.loan.push(loan);
-      await updateDoc(doc(db, "user", r.id), {
-        loan: r.loan,
-      });
+      if (parseFloat(principal) < parseFloat(r.balance)) {
+        const fd = {
+          principal: parseFloat(principal),
+          interestRate: parseFloat(a[interestRate].interest),
+          monthlyPayment: parseFloat(monthlyPayment),
+          loanPeriod: parseInt(a[interestRate].month),
+          borrower: auth.user.address,
+          id: uuid(),
+        };
+        r.fd.push(fd);
+        await updateDoc(doc(db, "user", r.id), {
+          fd: r.fd,
+        });
+      }
+      else{
+        alert("Insufficient Balance")
+      }
       setLoading(false);
-      navigate("/dashboard/loan/status");
     }
   };
   return (
@@ -162,7 +170,7 @@ const FD = () => {
           </p>
         </div>
         <div className="flex flex-col gap-5 justify-center items-center">
-          <Card title={`Fixed Deposit at ${interestRate}%`}>
+          <Card title={`Fixed Deposit at ${a[interestRate].interest}%`}>
             <TextField
               label="Amount"
               variant="outlined"
@@ -170,7 +178,9 @@ const FD = () => {
               onChange={(e) => setPrincipal(e.target.value)}
               type="number"
             />
-            <FormControl sx={{ width: "95%", marginY: "1rem", marginTop: "2rem" }}>
+            <FormControl
+              sx={{ width: "95%", marginY: "1rem", marginTop: "2rem" }}
+            >
               <InputLabel id="outputType-label">Time Period</InputLabel>
               <Select
                 labelId="outputType-label"
@@ -178,11 +188,11 @@ const FD = () => {
                 label="Loan Type"
                 onChange={(e) => setInterestRate(e.target.value)}
               >
-                <MenuItem value={5}>12 Months</MenuItem>
-                <MenuItem value={5.5}>18 Months</MenuItem>
-                <MenuItem value={6}>24 Months</MenuItem>
-                <MenuItem value={7.5}>36 Months</MenuItem>
-                <MenuItem value={8}>3 Years +</MenuItem>
+                <MenuItem value={0}>12 Months</MenuItem>
+                <MenuItem value={1}>18 Months</MenuItem>
+                <MenuItem value={2}>24 Months</MenuItem>
+                <MenuItem value={3}>36 Months</MenuItem>
+                <MenuItem value={4}>48 Months</MenuItem>
               </Select>
             </FormControl>
             <TextField
