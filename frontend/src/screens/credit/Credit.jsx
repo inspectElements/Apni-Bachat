@@ -258,6 +258,8 @@ const Credit = () => {
             <Card title="check payments" route="payments" />
             <Card title="account age" route="age" />
             <Card title="my accounts" route="accounts" />
+            <Card title="credits used" route="" />
+            <Card title="enquiry" route="" />
           </div>
       </div>
     </>
