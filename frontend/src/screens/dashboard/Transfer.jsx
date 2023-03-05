@@ -1,9 +1,18 @@
-import React from 'react';
+import React from "react";
 import { Typography, TextField, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
+import {
+  apniBachatConractAddress,
+  credibilityScoreConractAddress,
+} from "../../constants";
+import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
+import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/CredibilityScore.json";
+import { arcanaProvider } from "../../index";
+import { providers, Contract, utils } from "ethers";
+import { useAuth } from "@arcana/auth-react";
+
 const Card = (props) => {
-  const navigate = useNavigate();
   return (
     <>
       <Paper
@@ -43,6 +52,33 @@ const Card = (props) => {
 
 const Transfer = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
+
+  const [send_account, setSendAccount] = React.useState("");
+  const [send_token_amount, setSendTokenAmount] = React.useState("");
+
+  const onClickDeposit = () => {
+    const provider = new providers.Web3Provider(arcanaProvider.provider);
+    // get the end user
+    const signer = provider.getSigner();
+
+    const tx = {
+      from: auth.user.address,
+      to: send_account,
+      value: utils.parseEther(send_token_amount),
+      nonce: provider.getTransactionCount(send_account, "latest"),
+      gasLimit: utils.hexlify(100000),
+      gasPrice: provider.getGasPrice(),
+    };
+
+    signer.sendTransaction(tx).then((transaction) => {
+      console.dir(transaction);
+      setSendAccount("");
+      setSendTokenAmount("");
+      // navigate(0);
+    });
+  };
+
   return (
     <>
       <div className="bg min-h-[100vh]">
@@ -86,11 +122,15 @@ const Transfer = () => {
               label="Wallet Address"
               variant="outlined"
               sx={{ width: "95%", marginTop: "3rem" }}
+              value={send_account}
+              onChange={(e) => setSendAccount(e.target.value)}
             />
             <TextField
               label="Amount"
               variant="outlined"
-              sx={{ width: "95%", margin: "2rem"}}
+              sx={{ width: "95%", margin: "2rem" }}
+              onChange={(e) => setSendTokenAmount(e.target.value)}
+              value={send_token_amount}
             />
             <Button
               variant="contained"
@@ -110,7 +150,7 @@ const Transfer = () => {
                 marginTop: "1rem",
                 backdropFilter: "blur(5px)",
               }}
-              onClick={() => navigate(`/dashboard`)}
+              onClick={onClickDeposit}
             >
               Deposit
             </Button>
@@ -119,6 +159,6 @@ const Transfer = () => {
       </div>
     </>
   );
-}
+};
 
-export default Transfer
+export default Transfer;
