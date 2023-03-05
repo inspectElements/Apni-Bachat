@@ -78,6 +78,7 @@ const Card = (props) => {
       props.data.loan[parseInt(props.title) - 1].status = "paid";
     }
     await updateDoc(doc(db, "user", props.data.id), {
+      balance: parseFloat(props.data.balance) - parseFloat(props.amount),
       loan: props.data.loan,
     });
     navigate(0);
@@ -165,7 +166,12 @@ const LoanRepay = () => {
         let r = {};
         querySnapshot.forEach((doc) => {
           if (doc.data().uid == auth.user.address)
-            r = { id: doc.id, loan: doc.data().loan, pan: doc.data().pan };
+            r = {
+              id: doc.id,
+              loan: doc.data().loan,
+              pan: doc.data().pan,
+              balance: doc.data().balance,
+            };
         });
         setData(r);
       });
@@ -230,6 +236,7 @@ const LoanRepay = () => {
                       amount={item.monthlyPayment}
                       data={data}
                       loanPeriod={item.loanPeriod}
+                      balance={item.balance}
                     />
                   )}
                 </>
