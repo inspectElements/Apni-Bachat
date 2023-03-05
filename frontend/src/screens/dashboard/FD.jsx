@@ -36,9 +36,6 @@ function calculateMaturityValue(principal, interestRate, tenure) {
   // calculate the maturity value using the formula
   let maturityValue = principal * Math.pow(1 + interestRate / 1, n);
 
-  // round the maturity value to 2 decimal places
-  maturityValue = Math.round(maturityValue * 100) / 100;
-
   return maturityValue;
 }
 
@@ -136,7 +133,7 @@ const FD = () => {
           r.pan,
           utils.parseEther(principal.toString()),
           parseInt(a[interestRate].month),
-          parseFloat(a[interestRate].interest)
+          parseInt(a[interestRate].interest)
         );
 
         const fd = {
@@ -155,6 +152,7 @@ const FD = () => {
         alert("Insufficient Balance");
       }
       setLoading(false);
+      navigate(0);
     }
   };
   return (
