@@ -16,42 +16,85 @@ import axios from "axios";
 
 const Card = (props) => {
   const navigate = useNavigate();
-return (
-  <>
-    <Paper
-      elevation={3}
-      sx={{
-        width: "90%",
-        height: "75px",
-        background:
-          "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
-        border: "2px solid #000",
-        borderRadius: "13px",
-        backdropFilter: "blur(5px)",
-      }}
-    >
-      <div className="flex justify-between items-center">
-        <Typography
-          variant="h4"
-          component="h2"
-          color="primary.contrastText"
-          sx={{
-            fontSize: "1.25rem",
-            fontWeight: "bold",
-            color: "#000",
-            textAlign: "left",
-            pt: 2.5,
-            pl: 2,
-            fontFamily: "Poppins, sans-serif",
-          }}
-        >
-          {props.title}
-        </Typography>
-        {props.children}
-      </div>
-    </Paper>
-  </>
-);
+  return (
+    <>
+      <Paper
+        elevation={3}
+        sx={{
+          width: "90%",
+          height: "auto",
+          background:
+            "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+          border: "2px solid #000",
+          borderRadius: "13px",
+          backdropFilter: "blur(5px)",
+        }}
+      >
+        <div className="flex justify-between items-start px-10 py-5">
+          <div className="flex flex-col justify-center items-between pb-5">
+            <Typography
+              variant="h4"
+              component="h2"
+              color="primary.contrastText"
+              sx={{
+                fontSize: "1.75rem",
+                fontWeight: "bold",
+                color: "#000",
+                textAlign: "left",
+                pt: 2.5,
+                pl: 2,
+                fontFamily: "Poppins, sans-serif",
+              }}
+            >
+              {props.title}
+            </Typography>
+            <div className="pl-4 mt-[1.5rem] flex flex-col justify-center items-start gap-1">
+              <Typography
+                variant="h4"
+                component="h2"
+                color="black"
+                sx={{
+                  fontSize: "1.25rem",
+                  color: "black",
+                  textAlign: "center",
+                  fontFamily: "Poppins, sans-serif",
+                }}
+              >
+                PAN: {props.pan}
+              </Typography>
+              <Typography
+                variant="h4"
+                component="h2"
+                color="black"
+                sx={{
+                  fontSize: "1.25rem",
+                  color: "black",
+                  textAlign: "center",
+                  fontFamily: "Poppins, sans-serif",
+                }}
+              >
+                Phone: {props.mobile}
+              </Typography>
+              <Typography
+                variant="h4"
+                component="h2"
+                color="black"
+                sx={{
+                  fontSize: "1.25rem",
+                  color: "black",
+                  textAlign: "center",
+                  fontFamily: "Poppins, sans-serif",
+                }}
+              >
+                Income: {props.income}
+              </Typography>
+            </div>
+          </div>
+          {props.children}
+        </div>
+      </Paper>
+    </>
+  );
 };
 
 const OcrSpaceApi = () => {
@@ -137,72 +180,146 @@ const RequestItem = (props) => {
 
   return (
     <>
-    <Card title={props.name}>
-    <Button variant="contained" onClick={onClickApprove} sx={{
-      disableRipple: true,
-      width: "100px",
-      background:
-        "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
-      height: "50px",
-      color: "#000",
-      border: "2px solid #000",
-      borderRadius: "10px",
-      fontFamily: "Poppins, sans-serif",
-      fontWeight: "bold",
-      fontSize: "1.2rem",
-      textTransform: "none",
-      marginTop: "1rem",
-      marginRight: "1rem",
-    }}>
-          Approve
-        </Button>
-    </Card>
-    <div className="w-[90%] bg-white shadow-lg">
-      <CustomizedDialogs
-        open={modal}
-        setOpen={setModal}
-        stepCount={stepCount}
-        error={error}
-        steps={[
-          "Initiating contract interaction",
-          "Transacting with Apni Bachat smart contract",
-          "Success",
-        ]}
-      />
-      <div className="w-full flex justify-between p-5">
-        <div>
-          <h1 className="text-lg">Name: {props.name}</h1>
-          <h3>Pan card: {props.pan}</h3>
-          <h3>Phone: {props.mobile}</h3>
-          <h3>Income: {props.income}</h3>
-          <div className="flex gap-3 my-2">
-            <Button variant="outlined">
+      <Card
+        title={props.name}
+        pan={props.pan}
+        phone={props.mobile}
+        income={props.income}
+      >
+        <CustomizedDialogs
+          open={modal}
+          setOpen={setModal}
+          stepCount={stepCount}
+          error={error}
+          steps={[
+            "Initiating contract interaction",
+            "Transacting with Apni Bachat smart contract",
+            "Success",
+          ]}
+        />
+        <div className="flex flex-col gap-6 items-end">
+          <div className="flex">
+            <Button
+              variant="contained"
+              onClick={onClickApprove}
+              sx={{
+                disableRipple: true,
+                width: "100px",
+                background:
+                  "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                height: "50px",
+                color: "#000",
+                border: "2px solid #000",
+                borderRadius: "10px",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                textTransform: "none",
+                marginTop: "1rem",
+                marginRight: "1rem",
+              }}
+            >
+              Approve
+            </Button>
+            <Button
+              variant="contained"
+              onClick={onClickOcr}
+              sx={{
+                disableRipple: true,
+                width: "100px",
+                background:
+                  "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                height: "50px",
+                color: "#000",
+                border: "2px solid #000",
+                borderRadius: "10px",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                textTransform: "none",
+                marginTop: "1rem",
+                marginRight: "1rem",
+              }}
+            >
+              OCR
+            </Button>
+          </div>
+          <div className="flex my-2 justify-center items-center">
+            <img
+              src={props.signatureImg}
+              alt="signature"
+              className="h-12 border-2 border-black rounded-lg mr-[1rem]"
+            />
+            <Button
+              variant="contained"
+              sx={{
+                disableRipple: true,
+                width: "100px",
+                background:
+                  "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                height: "50px",
+                color: "#000",
+                border: "2px solid #000",
+                borderRadius: "10px",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                textTransform: "none",
+                marginRight: "1rem",
+              }}
+            >
               <a href={props.panImg} target="_blank">
-                pan card
+                Pan
               </a>
             </Button>
-            <Button variant="outlined">
+            <Button
+              variant="contained"
+              sx={{
+                disableRipple: true,
+                width: "100px",
+                background:
+                  "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                height: "50px",
+                color: "#000",
+                border: "2px solid #000",
+                borderRadius: "10px",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                textTransform: "none",
+                marginRight: "1rem",
+              }}
+            >
               <a href={props.aadharImg} target="_blank">
-                aadhar proof
+                Aadhar
               </a>
             </Button>
-            <Button variant="outlined">
+            <Button
+              variant="contained"
+              sx={{
+                disableRipple: true,
+                width: "100px",
+                background:
+                  "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                height: "50px",
+                color: "#000",
+                border: "2px solid #000",
+                borderRadius: "10px",
+                fontFamily: "Poppins, sans-serif",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                textTransform: "none",
+                marginRight: "1rem",
+              }}
+            >
               <a href={props.incomeImg} target="_blank">
-                income proof
+                Income
               </a>
             </Button>
-            <img src={props.signatureImg} alt="signature" className="h-16" />
+            {/* <div>{JSON.stringify(data)}</div> */}
           </div>
         </div>
-        <Button variant="contained" onClick={onClickApprove} className="h-12">
-          Approve
-        </Button>
-        <Button variant="contained" onClick={onClickOcr} className="h-12">
-          ocr
-        </Button>
-      </div>
-      <div>{JSON.stringify(data)}</div>
-    </div>
+      </Card>
     </>
   );
 };
@@ -245,37 +362,39 @@ function Account() {
           <CircularProgress />
         </div>
       )}
-      <Box sx={{ display: "flex", width: "100vw", height: "100vh" }} className="admin-bg">
+      <Box
+        sx={{ display: "flex", width: "100vw", height: "100vh" }}
+        className="admin-bg"
+      >
         <Sidebar />
         <div className="flex flex-col justify-start items-start w-[70%]">
-
-        <Typography
-          variant="h4"
-          color="black"
-          sx={{
-            fontSize: "2.5rem",
-            fontWeight: "bold",
-            textAlign: "center",
-            textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
-            fontFamily: "Poppins, sans-serif",
-            letterSpacing: "0.1rem",
-            my: "5rem",
-            mb: "4rem",
-            ml: "5rem",
-          }}
-        >
-          Account KYC Requests
-        </Typography>
-        <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2 overflow-y-auto">
-          {(!data || data.length === 0) && (
-            <div className="w-[90%] bg-white p-5 text-2xl flex justify-start items-start">
-              <h1 className="text-left ml">No requests</h1>
-            </div>
-          )}
-          {data?.map((item) => (
-            <RequestItem approve={approve} {...item} />
-          ))}
-        </div>
+          <Typography
+            variant="h4"
+            color="black"
+            sx={{
+              fontSize: "2.5rem",
+              fontWeight: "bold",
+              textAlign: "center",
+              textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
+              fontFamily: "Poppins, sans-serif",
+              letterSpacing: "0.1rem",
+              my: "5rem",
+              mb: "4rem",
+              ml: "5rem",
+            }}
+          >
+            Account KYC Requests
+          </Typography>
+          <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2 overflow-y-auto">
+            {(!data || data.length === 0) && (
+              <div className="w-[90%] bg-white p-5 text-2xl flex justify-start items-start">
+                <h1 className="text-left ml">No requests</h1>
+              </div>
+            )}
+            {data?.map((item) => (
+              <RequestItem approve={approve} {...item} />
+            ))}
+          </div>
         </div>
       </Box>
     </>

@@ -93,7 +93,7 @@ const Score = (props) => {
           >
             {t(props.title)}
           </Typography>
-          <img src={`/meter${getScore(parsedCreditScore)}.png`} alt="meter" />
+          {/* <img src={`/meter${getScore(parsedCreditScore)}.png`} alt="meter" />
           {parsedCreditScore !== null && (
             <Typography
               id="modal-modal-title"
@@ -104,9 +104,15 @@ const Score = (props) => {
             >
               {parsedCreditScore}
             </Typography>
-          )}
-          <Button onClick={fetchCreditScore}>Fetch Credibility Score</Button>
-          {/* <CreditMeter creditScore="500" style="height: 100px !important"/> */}
+          )} */}
+          <CreditMeter creditScore={parsedCreditScore} style="height: 100px !important"/>
+          <Button onClick={fetchCreditScore} sx={{
+            fontSize: "1rem",
+            fontWeight: "bold",
+            color: "black",
+            textAlign: "left",
+            transform: "translateY(-25%)",
+          }}>Update Score</Button>
         </div>
       </Paper>
     </>
