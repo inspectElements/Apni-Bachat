@@ -39,7 +39,8 @@ And thats how the flow of our app works.
 
 ## Features of Proposed Solution
 
-- Likey reducing rate of frauds
+- Reducing rate of frauds
+- Bringing blockchain interactions on a mobile app
 - Credibility Check
 - User-Friendly and Polished UI
 - Multiluigal support
