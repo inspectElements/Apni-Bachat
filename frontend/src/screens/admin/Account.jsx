@@ -4,7 +4,8 @@ import Sidebar from "./Sidebar";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 import { useAuth } from "@arcana/auth-react";
-
+import { Paper } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { providers, Contract } from "ethers";
 import { apniBachatConractAddress } from "../../constants";
 import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
@@ -12,6 +13,46 @@ import { arcanaProvider } from "../../index";
 import CustomizedDialogs from "../../components/CustomizedDialogs";
 
 import axios from "axios";
+
+const Card = (props) => {
+  const navigate = useNavigate();
+return (
+  <>
+    <Paper
+      elevation={3}
+      sx={{
+        width: "90%",
+        height: "75px",
+        background:
+          "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+        border: "2px solid #000",
+        borderRadius: "13px",
+        backdropFilter: "blur(5px)",
+      }}
+    >
+      <div className="flex justify-between items-center">
+        <Typography
+          variant="h4"
+          component="h2"
+          color="primary.contrastText"
+          sx={{
+            fontSize: "1.25rem",
+            fontWeight: "bold",
+            color: "#000",
+            textAlign: "left",
+            pt: 2.5,
+            pl: 2,
+            fontFamily: "Poppins, sans-serif",
+          }}
+        >
+          {props.title}
+        </Typography>
+        {props.children}
+      </div>
+    </Paper>
+  </>
+);
+};
 
 const OcrSpaceApi = () => {
   const [data, setData] = useState("");
@@ -95,6 +136,27 @@ const RequestItem = (props) => {
   };
 
   return (
+    <>
+    <Card title={props.name}>
+    <Button variant="contained" onClick={onClickApprove} sx={{
+      disableRipple: true,
+      width: "100px",
+      background:
+        "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+      height: "50px",
+      color: "#000",
+      border: "2px solid #000",
+      borderRadius: "10px",
+      fontFamily: "Poppins, sans-serif",
+      fontWeight: "bold",
+      fontSize: "1.2rem",
+      textTransform: "none",
+      marginTop: "1rem",
+      marginRight: "1rem",
+    }}>
+          Approve
+        </Button>
+    </Card>
     <div className="w-[90%] bg-white shadow-lg">
       <CustomizedDialogs
         open={modal}
@@ -141,6 +203,7 @@ const RequestItem = (props) => {
       </div>
       <div>{JSON.stringify(data)}</div>
     </div>
+    </>
   );
 };
 function Account() {
