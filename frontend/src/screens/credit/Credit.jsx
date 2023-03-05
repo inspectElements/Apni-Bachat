@@ -16,10 +16,31 @@ import { db } from "../../configs/firebase";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useTranslation } from "react-i18next";
 import CreditMeter from "./CreditMeter";
+import { providers, Contract } from "ethers";
 
 const Score = (props) => {
   const navigate = useNavigate();
+  const provider = new providers.Web3Provider(arcanaProvider.provider);
+  // get the end user
+  const signer = provider.getSigner();
+  // get the smart contract
+  const contract = new Contract(
+    credibilityScoreConractAddress,
+    CredibilityScore.abi,
+    signer
+  );
   const { t, i18n } = useTranslation();
+  const [panCard, setPanCard] = useState("");
+  const [parsedCreditScore, setParsedCreditScore] = React.useState(null);
+  const fetchCreditScore = async () => {
+    console.log("approve", panCard);
+
+    if (!panCard?.length > 0) return;
+
+    const creditScore = await contract.calculateCreditScore(panCard);
+    const _parsedCreditScore = parseInt(creditScore._hex.substring(2), 16);
+    setParsedCreditScore(_parsedCreditScore);
+  };
   useEffect(() => {
     i18n.changeLanguage("en");
   }, []);
@@ -54,7 +75,20 @@ const Score = (props) => {
           >
             {t(props.title)}
           </Typography>
-          <CreditMeter creditScore="500" style="height: 100px !important"/>
+          <img src={`/meter${getScore(parsedCreditScore)}.png`} alt="meter" />
+          {parsedCreditScore !== null && (
+            <Typography
+              id="modal-modal-title"
+              variant="h2"
+              component="h2"
+              className="text-center"
+              style={{ position: "absolute", top: "40%", left: "38%" }}
+            >
+              {parsedCreditScore}
+            </Typography>
+          )}
+          <Button onClick={fetchCreditScore}>Fetch Credibility Score</Button>
+          {/* <CreditMeter creditScore="500" style="height: 100px !important"/> */}
         </div>
       </Paper>
     </>
