@@ -14,7 +14,23 @@ import { useNavigate } from "react-router-dom";
 import DoneIcon from "@mui/icons-material/Done";
 import { useAuth } from "@arcana/auth-react";
 import { db } from "../../configs/firebase";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
+
+import {
+  apniBachatConractAddress,
+  credibilityScoreConractAddress,
+} from "../../constants";
+import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
+import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/CredibilityScore.json";
+import { arcanaProvider } from "../../index";
+import { providers, Contract, utils } from "ethers";
 
 // json for month number to month name
 const month = {
@@ -34,7 +50,22 @@ const month = {
 
 const Card = (props) => {
   const navigate = useNavigate();
-  const pay = async () => {
+
+  const provider = new providers.Web3Provider(arcanaProvider.provider);
+  // get the end user
+  const signer = provider.getSigner();
+  // get the smart contract
+  const contract = new Contract(
+    apniBachatConractAddress,
+    ApniBachat.abi,
+    signer
+  );
+
+  const pay = async (amt) => {
+    const amountInWei = utils.parseUnits(amt.toString().slice(0, 10), 18);
+
+    await contract.makeLoanPayment(props.data.pan, amountInWei);
+
     if (!props.data.loan[parseInt(props.title) - 1].periodRemaining) {
       props.data.loan[parseInt(props.title) - 1]["periodRemaining"] =
         parseInt(props.data.loan[parseInt(props.title) - 1].loanPeriod) - 1;
@@ -54,8 +85,46 @@ const Card = (props) => {
       props.data.loan[parseInt(props.title) - 1].status = "paid";
     }
     await updateDoc(doc(db, "user", props.data.id), {
+      balance: parseFloat(props.data.balance) - parseFloat(props.amount),
       loan: props.data.loan,
     });
+    let ref = await getDoc(doc(db, "transactions", props.data.id));
+
+    let type = "";
+    if (props.interest === 9) {
+      type = "Home Loan";
+    } else if (props.interest === 12) {
+      type = "Personal Loan";
+    } else if (props.interest === 7) {
+      type = "Car Loan";
+    } else if (props.interest === 5) {
+      type = "Education Loan";
+    } else if (props.interest === 14) {
+      type = "Business Loan";
+    }
+    let a = ref.data();
+    if (ref.exists()) {
+      a.transactions.push({
+        amount: parseFloat(props.amount),
+        date: new Date().toLocaleDateString(),
+        type: type,
+        status: "on_time",
+      });
+      await updateDoc(doc(db, "transactions", props.data.id), {
+        transactions: a.transactions,
+      });
+    } else {
+      ref = await setDoc(doc(db, "transactions", props.data.id), {
+        transactions: [
+          {
+            amount: parseFloat(props.amount),
+            date: new Date().toLocaleDateString(),
+            type: type,
+            status: "on_time",
+          },
+        ],
+      });
+    }
     navigate(0);
   };
   return (
@@ -119,9 +188,9 @@ const Card = (props) => {
             fontSize: "1.2rem",
             textTransform: "none",
           }}
-          onClick={() => pay()}
+          onClick={() => pay(props.amount)}
         >
-          {props.amount}
+          {props.amount.toString().slice(0, 10)}
         </Button>
       </Paper>
     </>
@@ -141,7 +210,12 @@ const LoanRepay = () => {
         let r = {};
         querySnapshot.forEach((doc) => {
           if (doc.data().uid == auth.user.address)
-            r = { id: doc.id, loan: doc.data().loan };
+            r = {
+              id: doc.id,
+              loan: doc.data().loan,
+              pan: doc.data().pan,
+              balance: doc.data().balance,
+            };
         });
         setData(r);
       });
@@ -206,6 +280,8 @@ const LoanRepay = () => {
                       amount={item.monthlyPayment}
                       data={data}
                       loanPeriod={item.loanPeriod}
+                      balance={data.balance}
+                      interest={item.interestRate}
                     />
                   )}
                 </>
