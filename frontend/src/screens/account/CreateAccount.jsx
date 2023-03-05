@@ -79,6 +79,7 @@ const CreateAccount = () => {
         kyc_done: false,
         balance: 0,
         loan: [],
+        fd: [],
       };
       await addDoc(collection(db, "user"), data);
       setLoading(false);
