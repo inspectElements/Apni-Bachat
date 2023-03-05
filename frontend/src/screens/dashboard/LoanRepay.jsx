@@ -16,6 +16,15 @@ import { useAuth } from "@arcana/auth-react";
 import { db } from "../../configs/firebase";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 
+import {
+  apniBachatConractAddress,
+  credibilityScoreConractAddress,
+} from "../../constants";
+import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
+import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/CredibilityScore.json";
+import { arcanaProvider } from "../../index";
+import { providers, Contract, utils } from "ethers";
+
 // json for month number to month name
 const month = {
   1: "January",
@@ -34,7 +43,22 @@ const month = {
 
 const Card = (props) => {
   const navigate = useNavigate();
-  const pay = async () => {
+
+  const provider = new providers.Web3Provider(arcanaProvider.provider);
+  // get the end user
+  const signer = provider.getSigner();
+  // get the smart contract
+  const contract = new Contract(
+    apniBachatConractAddress,
+    ApniBachat.abi,
+    signer
+  );
+
+  const pay = async (amt) => {
+    const amountInWei = utils.parseUnits(amt.toString().slice(0, 10), 18);
+
+    await contract.makeLoanPayment(props.data.pan, amountInWei);
+
     if (!props.data.loan[parseInt(props.title) - 1].periodRemaining) {
       props.data.loan[parseInt(props.title) - 1]["periodRemaining"] =
         parseInt(props.data.loan[parseInt(props.title) - 1].loanPeriod) - 1;
@@ -119,9 +143,9 @@ const Card = (props) => {
             fontSize: "1.2rem",
             textTransform: "none",
           }}
-          onClick={() => pay()}
+          onClick={() => pay(props.amount)}
         >
-          {props.amount}
+          {props.amount.toString().slice(0, 10)}
         </Button>
       </Paper>
     </>
@@ -141,7 +165,7 @@ const LoanRepay = () => {
         let r = {};
         querySnapshot.forEach((doc) => {
           if (doc.data().uid == auth.user.address)
-            r = { id: doc.id, loan: doc.data().loan };
+            r = { id: doc.id, loan: doc.data().loan, pan: doc.data().pan };
         });
         setData(r);
       });
