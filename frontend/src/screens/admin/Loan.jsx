@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Modal, Typography } from "@mui/material";
+import { Box, Button, Modal, Typography, Paper } from "@mui/material";
 import Sidebar from "./Sidebar";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
@@ -13,14 +13,80 @@ import { arcanaProvider } from "../../index";
 import { providers, Contract } from "ethers";
 import { useNavigate } from "react-router-dom";
 
+const Card = (props) => {
+  const navigate = useNavigate();
+  return (
+    <>
+      <Paper
+        elevation={3}
+        sx={{
+          width: "90%",
+          height: "auto",
+          background:
+            "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+          border: "2px solid #000",
+          borderRadius: "13px",
+          backdropFilter: "blur(5px)",
+        }}
+      >
+        <div className="flex justify-between items-start px-10 py-5">
+          <div className="flex flex-col justify-center items-between pb-5">
+            <Typography
+              variant="h4"
+              component="h2"
+              color="primary.contrastText"
+              sx={{
+                fontSize: "1.75rem",
+                fontWeight: "bold",
+                color: "#000",
+                textAlign: "left",
+                pt: 2.5,
+                pl: 2,
+                fontFamily: "Poppins, sans-serif",
+              }}
+            >
+              Loan Number: {props.title}
+            </Typography>
+            <div className="pl-4 mt-[1.5rem] flex flex-col justify-center items-start gap-1">
+              <Typography
+                variant="h4"
+                component="h2"
+                color="black"
+                sx={{
+                  fontSize: "1.25rem",
+                  color: "black",
+                  textAlign: "center",
+                  fontFamily: "Poppins, sans-serif",
+                }}
+              >
+                Loan ID: {props.id}
+              </Typography>
+              <Typography
+                variant="h4"
+                component="h2"
+                color="black"
+                sx={{
+                  fontSize: "1.25rem",
+                  color: "black",
+                  textAlign: "center",
+                  fontFamily: "Poppins, sans-serif",
+                }}
+              >
+                Loan Amount: {props.amount}
+              </Typography>
+            </div>
+          </div>
+          {props.children}
+        </div>
+      </Paper>
+    </>
+  );
+};
+
 const RequestItem = (props) => {
   return (
-    <div className="w-[90%] bg-white shadow-lg">
-      <div className="w-full flex justify-between p-5">
-        <div>
-          <h1>Loan id: {props.index}</h1>
-          <h3>Loan amount: {props.principal}</h3>
-        </div>
+    <>
+      <Card title={props.index} id={props.index} amount={props.principal}>
         <Button
           variant="contained"
           onClick={() => {
@@ -29,11 +95,27 @@ const RequestItem = (props) => {
             props.setId(props.id);
             props.setBorrower(props.borrower);
           }}
+          sx={{
+            disableRipple: true,
+            width: "100px",
+            background:
+              "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+            height: "50px",
+            color: "#000",
+            border: "2px solid #000",
+            borderRadius: "10px",
+            fontFamily: "Poppins, sans-serif",
+            fontWeight: "bold",
+            fontSize: "1.2rem",
+            textTransform: "none",
+            marginTop: "1rem",
+            marginRight: "1rem",
+          }}
         >
-          Approve
+          Verify
         </Button>
-      </div>
-    </div>
+      </Card>
+    </>
   );
 };
 const style = {
@@ -181,87 +263,104 @@ function Loan() {
     });
   };
   return (
-    <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style} className="relative">
-          <img src={`/meter${getScore(parsedCreditScore)}.png`} alt="meter" />
-          {parsedCreditScore !== null && (
-            <Typography
-              id="modal-modal-title"
-              variant="h2"
-              component="h2"
-              className="text-center"
-              style={{ position: "absolute", top: "40%", left: "38%" }}
-            >
-              {parsedCreditScore}
-            </Typography>
-          )}
-          <div className="w-full flex justify-center items-start">
-            <Button onClick={fetchCreditScore}>fetch</Button>
-            <Button onClick={approveOnClick}>approve</Button>
-            <Button onClick={rejectLoanRequest}>reject</Button>
+    <>
+      <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style} className="relative">
+            <img src={`/meter${getScore(parsedCreditScore)}.png`} alt="meter" />
+            {parsedCreditScore !== null && (
+              <Typography
+                id="modal-modal-title"
+                variant="h2"
+                component="h2"
+                className="text-center"
+                style={{ position: "absolute", top: "40%", left: "38%" }}
+              >
+                {parsedCreditScore}
+              </Typography>
+            )}
+            <div className="w-full flex justify-center items-start">
+              <Button onClick={fetchCreditScore}>fetch</Button>
+              <Button onClick={approveOnClick}>approve</Button>
+              <Button onClick={rejectLoanRequest}>reject</Button>
+            </div>
+          </Box>
+        </Modal>
+        <Modal
+          open={openRejected}
+          onClose={handleCloseRejected}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style} className="relative">
+            <img src="/cross.final.gif" alt="rejected" />
+            <h2 className="text-center font-bold my-3">
+              Contract rejected the loan due to bad credibility
+            </h2>
+            <div className="w-full flex justify-center items-start">
+              <Button onClick={handleCloseRejected} variant="contained">
+                Ok
+              </Button>
+            </div>
+          </Box>
+        </Modal>
+        <Modal
+          open={openAccept}
+          onClose={handleCloseAccept}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style} className="relative">
+            <img src="/tick.final.gif" />
+            <h2 className="text-center font-bold my-3">
+              Contract has accepted the loan
+            </h2>
+            <div className="w-full flex justify-center items-start">
+              <Button onClick={handleCloseAccept} variant="outlined" fullWidth>
+                OK
+              </Button>
+            </div>
+          </Box>
+        </Modal>
+        <Sidebar />
+        <div className="flex flex-col justify-start items-start w-[70%]">
+          <Typography
+            variant="h4"
+            color="black"
+            sx={{
+              fontSize: "2.5rem",
+              fontWeight: "bold",
+              textAlign: "center",
+              textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
+              fontFamily: "Poppins, sans-serif",
+              letterSpacing: "0.1rem",
+              my: "5rem",
+              mb: "4rem",
+              ml: "5rem",
+            }}
+          >
+            Account KYC Requests
+          </Typography>
+          <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2">
+            {data?.map((item, index) => (
+              <RequestItem
+                handleOpen={handleOpen}
+                setPan={setPanCard}
+                setId={setId}
+                setBorrower={setBorrower}
+                {...item}
+                index={index}
+              />
+            ))}
           </div>
-        </Box>
-      </Modal>
-      <Modal
-        open={openRejected}
-        onClose={handleCloseRejected}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style} className="relative">
-          <img
-            src="/cross.final.gif"
-            alt="rejected"
-          />
-          <h2 className="text-center font-bold my-3">
-            Contract rejected the loan due to bad credibility
-          </h2>
-          <div className="w-full flex justify-center items-start">
-            <Button onClick={handleCloseRejected} variant="contained">
-              Ok
-            </Button>
-          </div>
-        </Box>
-      </Modal>
-      <Modal
-        open={openAccept}
-        onClose={handleCloseAccept}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style} className="relative">
-          <img src="/tick.final.gif"/>
-          <h2 className="text-center font-bold my-3">
-            Contract has accepted the loan
-          </h2>
-          <div className="w-full flex justify-center items-start">
-            <Button onClick={handleCloseAccept} variant="outlined" fullWidth>
-              OK
-            </Button>
-          </div>
-        </Box>
-      </Modal>
-      <Sidebar />
-
-      <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2">
-        {data?.map((item, index) => (
-          <RequestItem
-            handleOpen={handleOpen}
-            setPan={setPanCard}
-            setId={setId}
-            setBorrower={setBorrower}
-            {...item}
-            index={index}
-          />
-        ))}
-      </div>
-    </Box>
+        </div>
+      </Box>
+    </>
   );
 }
 
