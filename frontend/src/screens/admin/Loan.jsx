@@ -264,7 +264,7 @@ function Loan() {
   };
   return (
     <>
-      <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
+      <Box sx={{ display: "flex", width: "100vw", height: "100vh", borderRadius: "10px !important" }} className="admin-bg">
         <Modal
           open={open}
           onClose={handleClose}
@@ -285,9 +285,75 @@ function Loan() {
               </Typography>
             )}
             <div className="w-full flex justify-center items-start">
-              <Button onClick={fetchCreditScore}>fetch</Button>
-              <Button onClick={approveOnClick}>approve</Button>
-              <Button onClick={rejectLoanRequest}>reject</Button>
+              <Button
+                variant="contained"
+                onClick={fetchCreditScore}
+                sx={{
+                  disableRipple: true,
+                  // width: "100px",
+                  background:
+                    "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                  height: "50px",
+                  color: "#000",
+                  border: "2px solid #000",
+                  borderRadius: "10px",
+                  fontFamily: "Poppins, sans-serif",
+                  fontWeight: "bold",
+                  fontSize: "1.2rem",
+                  textTransform: "none",
+                  marginTop: "1rem",
+                  marginRight: "1rem",
+                  paddingX: "1rem",
+                }}
+              >
+                Fetch
+              </Button>
+              <Button
+                variant="contained"
+                onClick={approveOnClick}
+                sx={{
+                  disableRipple: true,
+                  // width: "100px",
+                  background:
+                    "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                  height: "50px",
+                  color: "#000",
+                  border: "2px solid #000",
+                  borderRadius: "10px",
+                  fontFamily: "Poppins, sans-serif",
+                  fontWeight: "bold",
+                  fontSize: "1.2rem",
+                  textTransform: "none",
+                  marginTop: "1rem",
+                  marginRight: "1rem",
+                  paddingX: "1rem",
+                }}
+              >
+                Approve
+              </Button>
+              {/* <Button
+                variant="contained"
+                nClick={rejectLoanRequest}
+                sx={{
+                  disableRipple: true,
+                  // width: "100px",
+                  background:
+                    "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                  height: "50px",
+                  color: "#000",
+                  border: "2px solid #000",
+                  borderRadius: "10px",
+                  fontFamily: "Poppins, sans-serif",
+                  fontWeight: "bold",
+                  fontSize: "1.2rem",
+                  textTransform: "none",
+                  marginTop: "1rem",
+                  marginRight: "1rem",
+                  paddingX: "1rem",
+                }}
+              >
+                Reject
+              </Button> */}
             </div>
           </Box>
         </Modal>
@@ -303,7 +369,26 @@ function Loan() {
               Contract rejected the loan due to bad credibility
             </h2>
             <div className="w-full flex justify-center items-start">
-              <Button onClick={handleCloseRejected} variant="contained">
+            <Button
+                variant="contained"
+                onClick={handleCloseRejected} 
+                sx={{
+                  disableRipple: true,
+                  width: "100px",
+                  background:
+                    "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                  height: "50px",
+                  color: "#000",
+                  border: "2px solid #000",
+                  borderRadius: "10px",
+                  fontFamily: "Poppins, sans-serif",
+                  fontWeight: "bold",
+                  fontSize: "1.2rem",
+                  textTransform: "none",
+                  marginTop: "1rem",
+                  marginRight: "1rem",
+                }}
+              >
                 Ok
               </Button>
             </div>
@@ -317,12 +402,32 @@ function Loan() {
         >
           <Box sx={style} className="relative">
             <img src="/tick.final.gif" />
-            <h2 className="text-center font-bold my-3">
+            <h2 className="text-center font-bold my-3 text-xl">
               Contract has accepted the loan
             </h2>
             <div className="w-full flex justify-center items-start">
-              <Button onClick={handleCloseAccept} variant="outlined" fullWidth>
-                OK
+            <Button
+                variant="contained"
+                fullWidth
+                onClick={handleCloseAccept} 
+                sx={{
+                  disableRipple: true,
+                  // width: "100px",
+                  background:
+                    "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+                  height: "50px",
+                  color: "#000",
+                  border: "2px solid #000",
+                  borderRadius: "10px",
+                  fontFamily: "Poppins, sans-serif",
+                  fontWeight: "bold",
+                  fontSize: "1.2rem",
+                  textTransform: "none",
+                  marginTop: "1rem",
+                  marginRight: "1rem",
+                }}
+              >
+                Ok
               </Button>
             </div>
           </Box>
@@ -344,9 +449,14 @@ function Loan() {
               ml: "5rem",
             }}
           >
-            Account KYC Requests
+            Account Loan Requests
           </Typography>
           <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2">
+          {(!data || data.length === 0) && (
+              <div className="w-[90%] p-5 text-2xl flex justify-start items-start">
+                <h1 className="text-left ml">No requests</h1>
+              </div>
+            )}
             {data?.map((item, index) => (
               <RequestItem
                 handleOpen={handleOpen}
