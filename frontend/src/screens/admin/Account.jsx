@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import Sidebar from "./Sidebar";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
@@ -182,18 +182,37 @@ function Account() {
           <CircularProgress />
         </div>
       )}
-      <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
+      <Box sx={{ display: "flex", width: "100vw", height: "100vh" }} className="admin-bg">
         <Sidebar />
+        <div className="flex flex-col justify-start items-start w-[70%]">
 
+        <Typography
+          variant="h4"
+          color="black"
+          sx={{
+            fontSize: "2.5rem",
+            fontWeight: "bold",
+            textAlign: "center",
+            textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
+            fontFamily: "Poppins, sans-serif",
+            letterSpacing: "0.1rem",
+            my: "5rem",
+            mb: "4rem",
+            ml: "5rem",
+          }}
+        >
+          Account KYC Requests
+        </Typography>
         <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2 overflow-y-auto">
           {(!data || data.length === 0) && (
-            <div className="w-[90%] bg-white shadow-lg p-5">
-              <h1 className="m-auto w-fit">No requests</h1>
+            <div className="w-[90%] bg-white p-5 text-2xl flex justify-start items-start">
+              <h1 className="text-left ml">No requests</h1>
             </div>
           )}
           {data?.map((item) => (
             <RequestItem approve={approve} {...item} />
           ))}
+        </div>
         </div>
       </Box>
     </>
