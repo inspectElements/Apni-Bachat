@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography, TextField, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { utils } from "ethers";
+import { useAuth } from "@arcana/auth-react";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { db } from "../../configs/firebase";
 
 const Transactions = (props) => {
   const navigate = useNavigate();
@@ -50,7 +53,7 @@ const Transactions = (props) => {
             {props.title}
           </Typography>
           <div className="mt-[1.5rem] flex flex-col justify-center items-start gap-2">
-          <Typography
+            <Typography
               variant="h4"
               component="h2"
               color="black"
@@ -61,9 +64,14 @@ const Transactions = (props) => {
                 fontFamily: "Poppins, sans-serif",
               }}
             >
-              Status: <span style={{
-                fontWeight: "bold",
-              }}>{stat}</span>
+              Status:{" "}
+              <span
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                {stat}
+              </span>
             </Typography>
             <Typography
               variant="h4"
@@ -76,7 +84,7 @@ const Transactions = (props) => {
                 fontFamily: "Poppins, sans-serif",
               }}
             >
-              Amount: {props.amount}, Rate : 10%
+              Amount: {props.amount.toString().slice(0, 7)}, Rate : 10%
             </Typography>
           </div>
         </div>
@@ -126,34 +134,46 @@ const Card = (props) => {
 };
 
 const Payments = () => {
-  let loanDeets = [
-    {
-      loanType: "Home Loan",
-      loanAmount: 200,
-      loanTenure: 1,
-      interestRate: 10,
-      repaymentStatus: "on_time",
-      startDate: 1610000000,
-    },
-    {
-      loanType: "Home Loan",
-      loanAmount: 200,
-      loanTenure: 1,
-      interestRate: 10,
-      repaymentStatus: "delayed",
-      startDate: 1610000000,
-    },
-    {
-      loanType: "Home Loan",
-      loanAmount: 200,
-      loanTenure: 1,
-      interestRate: 10,
-      repaymentStatus: "semi_delayed",
-      startDate: 1610000000,
-    },
-  ];
-
+  const auth = useAuth();
   const navigate = useNavigate();
+  const [data, setData] = React.useState();
+  const [transactions, setTransactions] = React.useState();
+  const [loading, setLoading] = React.useState(false);
+  useEffect(() => {
+    if (!auth) return;
+    if (!auth.user) return;
+    if (!auth.isLoggedIn) return;
+    getDocs(collection(db, "user")).then((query) => {
+      setLoading(true);
+      query.forEach((docu) => {
+        let temp = docu.data();
+        console.log(temp);
+        if (docu.data().uid === auth.user.address) {
+          setData({ id: docu.id, ...temp });
+        }
+      });
+      setLoading(false);
+    });
+  }, [auth]);
+  const [pending, setPending] = React.useState(0);
+  const [approved, setApproved] = React.useState(0);
+  useEffect(() => {
+    if (!data) return;
+    else {
+      let p = 0,
+        a = 0;
+      data.loan.forEach((loans) => {
+        if (loans.status === "applied") p += 1;
+        if (loans.status === "approved" || loans.status === 'paid') a += 1;
+      });
+      console.log(p, a);
+      setPending(p);
+      setApproved(a);
+      getDoc(doc(db, "transactions", data.id)).then((docu) => {
+        setTransactions(docu.data());
+      });
+    }
+  }, [data]);
   return (
     <>
       <div className="bg min-h-[100vh]">
@@ -233,7 +253,7 @@ const Payments = () => {
                 }}
               >
                 <div className="flex flex-col justify-center items-start">
-                  0{" "}
+                  {pending}
                   <span
                     style={{
                       fontSize: "1.25rem",
@@ -259,7 +279,7 @@ const Payments = () => {
                 }}
               >
                 <div className="flex flex-col justify-center items-start">
-                  0{" "}
+                  {approved}
                   <span
                     style={{
                       fontSize: "1.25rem",
@@ -289,11 +309,11 @@ const Payments = () => {
           >
             Transactions
           </Typography>
-          {loanDeets.map((loan) => (
+          {transactions?.transactions.map((loan) => (
             <Transactions
-              title={loan.loanType}
-              status={loan.repaymentStatus}
-              amount={loan.loanAmount}
+              title={loan.type}
+              status={loan.status}
+              amount={loan.amount}
             />
           ))}
         </div>
