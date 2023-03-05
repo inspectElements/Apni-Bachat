@@ -17,6 +17,15 @@ import { collection, doc, updateDoc, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import uuid from "react-uuid";
 
+import {
+  apniBachatConractAddress,
+  credibilityScoreConractAddress,
+} from "../../constants";
+import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
+import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/CredibilityScore.json";
+import { arcanaProvider } from "../../index";
+import { providers, Contract, utils } from "ethers";
+
 function calculateMaturityValue(principal, interestRate, tenure) {
   // convert interest rate to decimal
   interestRate = interestRate / 100;
@@ -73,6 +82,14 @@ const Card = (props) => {
 };
 
 const FD = () => {
+  const provider = new providers.Web3Provider(arcanaProvider.provider);
+  const signer = provider.getSigner();
+  const apniBachatContract = new Contract(
+    apniBachatConractAddress,
+    ApniBachat.abi,
+    signer
+  );
+
   const navigate = useNavigate();
   const auth = useAuth();
   const [loading, setLoading] = React.useState(false);
@@ -86,6 +103,7 @@ const FD = () => {
     { month: 3, interest: 7.5 },
     { month: 4, interest: 8 },
   ];
+
   useEffect(() => {
     if (principal && interestRate) console.log(principal, interestRate);
     setMonthlyPayment(
@@ -98,6 +116,7 @@ const FD = () => {
       )
     );
   }, [principal, interestRate]);
+
   const applyLoan = async () => {
     if (auth.user) {
       setLoading(true);
@@ -105,9 +124,21 @@ const FD = () => {
       let r = {};
       docRef.forEach((doc) => {
         if (doc.data().uid === auth.user.address)
-          r = { id: doc.id, fd: doc.data().fd, balance: doc.data().balance };
+          r = {
+            id: doc.id,
+            fd: doc.data().fd,
+            balance: doc.data().balance,
+            pan: doc.data().pan,
+          };
       });
       if (parseFloat(principal) < parseFloat(r.balance)) {
+        await apniBachatContract.startFixedDeposit(
+          r.pan,
+          utils.parseEther(principal.toString()),
+          parseInt(a[interestRate].month),
+          parseFloat(a[interestRate].interest)
+        );
+
         const fd = {
           principal: parseFloat(principal),
           interestRate: parseFloat(a[interestRate].interest),
@@ -120,9 +151,8 @@ const FD = () => {
         await updateDoc(doc(db, "user", r.id), {
           fd: r.fd,
         });
-      }
-      else{
-        alert("Insufficient Balance")
+      } else {
+        alert("Insufficient Balance");
       }
       setLoading(false);
     }
