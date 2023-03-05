@@ -19,6 +19,14 @@ body {
   width: 100%;
 }
 
+.chatbot-container__p {
+  width: 100%;
+}
+
+.rsc-container {
+  border-radius: 0px !important;
+}
+
 .bg {
   background-image: url("./assets/mainBG.png");
   background-repeat: no-repeat;
