@@ -38,14 +38,13 @@ const Score = (props) => {
     signer
   );
   const { t, i18n } = useTranslation();
-  const [panCard, setPanCard] = useState("");
   const [parsedCreditScore, setParsedCreditScore] = React.useState(null);
   const fetchCreditScore = async () => {
-    console.log("approve", panCard);
+    console.log("approve", props.panCard);
 
-    if (!panCard?.length > 0) return;
+    if (!props.panCard?.length > 0) return;
 
-    const creditScore = await contract.calculateCreditScore(panCard);
+    const creditScore = await contract.calculateCreditScore(props.panCard);
     const _parsedCreditScore = parseInt(creditScore._hex.substring(2), 16);
     setParsedCreditScore(_parsedCreditScore);
   };
@@ -180,6 +179,7 @@ const Credit = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState();
   const [kyc, setKyc] = useState();
+  const [panCard, setPanCard] = useState();
   useEffect(() => {
     if (!auth.user) return;
     const getProperties = async () => {
@@ -202,6 +202,7 @@ const Credit = () => {
         docRef.forEach((doc) => {
           if (doc.data().uid == auth.user.address) {
             let temp = doc.data();
+            setPanCard(temp.pan);
             setKyc(temp.kyc_done);
           }
         });
@@ -306,7 +307,7 @@ const Credit = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-7 py-10">
-          <Score title="credibility score" />
+          <Score title="credibility score" panCard={panCard}/>
           <Card title="check payments" route="payments" />
           <Card title="account age" route="age" />
           <Card title="my accounts" route="accounts" />
