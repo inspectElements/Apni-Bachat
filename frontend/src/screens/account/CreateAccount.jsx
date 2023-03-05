@@ -25,7 +25,7 @@ const CreateAccount = () => {
   const [data, setData] = React.useState();
 
   useEffect(() => {
-    if(!auth) return;
+    if (!auth) return;
     if (auth.isLoggedIn) {
       setLoading(true);
       getDocs(collection(db, "user")).then((querySnapshot) => {
@@ -35,6 +35,7 @@ const CreateAccount = () => {
           }
         });
       });
+      setLoading(false);
     }
   }, [auth]);
   useEffect(() => {

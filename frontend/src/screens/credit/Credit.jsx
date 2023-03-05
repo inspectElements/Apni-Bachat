@@ -16,6 +16,14 @@ import { db } from "../../configs/firebase";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useTranslation } from "react-i18next";
 import CreditMeter from "./CreditMeter";
+
+import {
+  apniBachatConractAddress,
+  credibilityScoreConractAddress,
+} from "../../constants";
+import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
+import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/CredibilityScore.json";
+import { arcanaProvider } from "../../index";
 import { providers, Contract } from "ethers";
 
 const Score = (props) => {
@@ -44,6 +52,17 @@ const Score = (props) => {
   useEffect(() => {
     i18n.changeLanguage("en");
   }, []);
+
+  const getScore = (credit) => {
+    if (credit < 300) {
+      return 1;
+    } else if (credit < 700) {
+      return 2;
+    } else {
+      return 3;
+    }
+  };
+
   return (
     <>
       <Paper
@@ -196,8 +215,7 @@ const Credit = () => {
         KYC under process
       </div>
     );
-  } 
-  else if (kyc === undefined) {
+  } else if (kyc === undefined) {
     return (
       <div className="w-screen h-screen flex justify-center items-center text-2xl bg  font-bold">
         <CircularProgress />
@@ -207,94 +225,94 @@ const Credit = () => {
   return (
     <>
       <div className="bg min-h-[100vh] py-10">
-          <div className="flex justify-between">
-            <svg
-              className="w-7 absolute inset-0 mt-5 ml-5"
-              fill="#000"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 448 512"
-              onClick={() => navigate("/home")}
-            >
-              <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
-            </svg>
-            <ChatIcon
-              className="absolute top-0 right-0 mt-5 mr-5"
-              sx={{ fontSize: "2rem" }}
-              onClick={() => navigate("/chat")}
-            />
-          </div>
-          <Typography
-            variant="h4"
-            component="h2"
-            color="bold"
-            sx={{
-              fontWeight: "bold",
-              textAlign: "center",
-              mt: "10vh",
-              mb: 1,
-              textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
-              fontFamily: "Poppins, sans-serif",
-              letterSpacing: "0.1rem",
-            }}
+        <div className="flex justify-between">
+          <svg
+            className="w-7 absolute inset-0 mt-5 ml-5"
+            fill="#000"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 448 512"
+            onClick={() => navigate("/home")}
           >
-            {t("hi")}, Eshan
-          </Typography>
-          <p
-            style={{
-              fontSize: "1.25rem",
-              textAlign: "center",
-              color: "bold",
-              marginBottom: "2rem",
-            }}
-          >
-            {t("welcome to")}
-          </p>
+            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+          </svg>
+          <ChatIcon
+            className="absolute top-0 right-0 mt-5 mr-5"
+            sx={{ fontSize: "2rem" }}
+            onClick={() => navigate("/chat")}
+          />
+        </div>
+        <Typography
+          variant="h4"
+          component="h2"
+          color="bold"
+          sx={{
+            fontWeight: "bold",
+            textAlign: "center",
+            mt: "10vh",
+            mb: 1,
+            textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
+            fontFamily: "Poppins, sans-serif",
+            letterSpacing: "0.1rem",
+          }}
+        >
+          {t("hi")}, Eshan
+        </Typography>
+        <p
+          style={{
+            fontSize: "1.25rem",
+            textAlign: "center",
+            color: "bold",
+            marginBottom: "2rem",
+          }}
+        >
+          {t("welcome to")}
+        </p>
 
-          <div className="flex justify-center">
-            <FormControl
+        <div className="flex justify-center">
+          <FormControl
+            sx={{
+              width: "120px",
+            }}
+          >
+            <InputLabel
+              id="demo-simple-select-label"
               sx={{
-                width: "120px",
+                fontSize: 16,
               }}
             >
-              <InputLabel
-                id="demo-simple-select-label"
-                sx={{
-                  fontSize: 16,
-                }}
-              >
-                Lang
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Lang"
-                defaultValue={"en"}
-                onChange={(e) => {
-                  i18n.changeLanguage(e.target.value);
-                }}
-                sx={{
-                  borderRadius: "15px",
+              Lang
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Lang"
+              defaultValue={"en"}
+              onChange={(e) => {
+                i18n.changeLanguage(e.target.value);
+              }}
+              sx={{
+                borderRadius: "15px",
 
-                  "& fieldset": {
-                    height: "50px",
-                    border: "2px solid gray",
-                  },
-                }}
-              >
-                <MenuItem value={"en"}>English</MenuItem>
-                <MenuItem value={"hi"}>Hindi</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
+                "& fieldset": {
+                  height: "50px",
+                  border: "2px solid gray",
+                },
+              }}
+            >
+              <MenuItem value={"en"}>English</MenuItem>
+              <MenuItem value={"hi"}>Hindi</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
 
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-7 py-10">
-            <Score title="credibility score" />
-            <Card title="check payments" route="payments" />
-            <Card title="account age" route="age" />
-            <Card title="my accounts" route="accounts" />
-            <Card title="credits used" route="" />
-            <Card title="enquiry" route="" />
-          </div>
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-7 py-10">
+          <Score title="credibility score" />
+          <Card title="check payments" route="payments" />
+          <Card title="account age" route="age" />
+          <Card title="my accounts" route="accounts" />
+          <Card title="credits used" route="" />
+          <Card title="enquiry" route="" />
+        </div>
       </div>
     </>
   );
