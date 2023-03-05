@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  Modal,
+} from "@mui/material";
 import Sidebar from "./Sidebar";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
@@ -11,7 +17,6 @@ import { apniBachatConractAddress, ocrSpaceKey } from "../../constants";
 import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
 import { arcanaProvider } from "../../index";
 import CustomizedDialogs from "../../components/CustomizedDialogs";
-
 import axios from "axios";
 
 const Card = (props) => {
@@ -96,47 +101,25 @@ const Card = (props) => {
     </>
   );
 };
-
-const OcrSpaceApi = () => {
-  const [data, setData] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await axios.post("https://api.ocr.space/parse/image", {
-        apikey: "YOUR_API_KEY",
-        url: "IMAGE_URL",
-      });
-      setData(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <button type="submit">Send Request</button>
-      </form>
-      <div>{JSON.stringify(data)}</div>
-    </div>
-  );
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
 };
-
 const RequestItem = (props) => {
   const provider = new providers.Web3Provider(arcanaProvider.provider);
-  // get the end user
   const signer = provider.getSigner();
-  // get the smart contract
   const contract = new Contract(
     apniBachatConractAddress,
     ApniBachat.abi,
     signer
   );
-
-  const [data, setData] = useState("");
-
   const [modal, setModal] = useState(false);
   const [stepCount, setStepCount] = useState(0);
   const [error, setError] = useState(null);
@@ -163,21 +146,30 @@ const RequestItem = (props) => {
 
     setStepCount((prev) => prev + 1);
   };
-
+  const [ocrData, setOcrData] = useState(null);
   const onClickOcr = async (e) => {
-    e.preventDefault();
+    const formData = new FormData();
+    formData.append("apikey", ocrSpaceKey);
+    formData.append("url", props.incomeImg);
+    formData.append("language", "eng"); // set the language code for the text to be extracted
+    formData.append("isOverlayRequired", false);
+    formData.append("fileType", "jpg");
+    formData.append("OCREngine", 2);
 
-    try {
-      const response = await axios.post("https://api8.ocr.space/parse/image", {
-        apikey: ocrSpaceKey,
-        url: "https://img.freepik.com/free-vector/stylish-indian-flag-design_1394-725.jpg?w=1380&t=st=1677981733~exp=1677982333~hmac=e0f4ca8468321f9b8605c163aa79a74f9224065df607a3066969c64bb3716485",
-      });
-      setData(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await axios.post(
+      "https://api8.ocr.space/parse/image",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    setOcrData(response.data);
   };
-
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   return (
     <>
       <Card
@@ -223,7 +215,10 @@ const RequestItem = (props) => {
             </Button>
             <Button
               variant="contained"
-              onClick={onClickOcr}
+              onClick={() => {
+                onClickOcr();
+                handleOpen();
+              }}
               sx={{
                 disableRipple: true,
                 width: "100px",
@@ -243,6 +238,23 @@ const RequestItem = (props) => {
             >
               OCR
             </Button>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  OCR Extracted Data
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                  {ocrData && (
+                    <div> {ocrData.ParsedResults[0].ParsedText} </div>
+                  )}
+                </Typography>
+              </Box>
+            </Modal>
           </div>
           <div className="flex my-2 justify-center items-center">
             <img
@@ -318,6 +330,7 @@ const RequestItem = (props) => {
             </Button>
             {/* <div>{JSON.stringify(data)}</div> */}
           </div>
+          {/* {ocrData && <div>{ocrData.ParsedResults[0].ParsedText}</div>}  */}
         </div>
       </Card>
     </>
