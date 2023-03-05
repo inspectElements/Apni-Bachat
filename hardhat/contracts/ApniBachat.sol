@@ -46,6 +46,19 @@ interface CredibilityScore {
 }
 
 contract ApniBachat {
+    // fixed deposit struct
+    struct FixedDeposit {
+        uint256 amount;
+        uint256 interest;
+        uint256 maturityAmount;
+        uint256 maturityDate;
+        bool isWithdrawn;
+    }
+
+    // fixed deposits mapping
+    mapping(string => FixedDeposit) public fixedDeposits;
+
+
     mapping(string => PersonalInformation) users;
 
     mapping(string => uint256) public balance;
@@ -178,5 +191,35 @@ contract ApniBachat {
             panNumber,
             loanRepaymentHistory
         );
+    }
+
+    // funtion to start fixed deposit
+    function startFixedDeposit(
+        string memory panNumber,
+        uint256 amount,
+        uint256 tenure,
+        uint256 interestPercent
+    ) public onlyEnrolled(panNumber) {
+        require(balance[panNumber] >= amount, "Insufficient Balance");
+        require(amount > 0, "Amount should be positive");
+        require(tenure > 0, "Tenure should be positive");
+
+        balance[panNumber] -= amount;
+        totalBalance -= amount;
+
+        uint256 interest = (amount * interestPercent * tenure) / 100;
+        uint256 maturityAmount = amount + interest;
+
+        uint256 maturityDate = block.timestamp + (tenure * 30 days);
+
+        FixedDeposit memory fd = FixedDeposit(
+            amount,
+            interest,
+            maturityAmount,
+            maturityDate,
+            false
+        );
+
+        fixedDeposits[panNumber] = fd;
     }
 }
