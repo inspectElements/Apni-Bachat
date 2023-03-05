@@ -14,7 +14,14 @@ import { useNavigate } from "react-router-dom";
 import DoneIcon from "@mui/icons-material/Done";
 import { useAuth } from "@arcana/auth-react";
 import { db } from "../../configs/firebase";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
 
 import {
   apniBachatConractAddress,
@@ -81,6 +88,43 @@ const Card = (props) => {
       balance: parseFloat(props.data.balance) - parseFloat(props.amount),
       loan: props.data.loan,
     });
+    let ref = await getDoc(doc(db, "transactions", props.data.id));
+
+    let type = "";
+    if (props.interest === 9) {
+      type = "Home Loan";
+    } else if (props.interest === 12) {
+      type = "Personal Loan";
+    } else if (props.interest === 7) {
+      type = "Car Loan";
+    } else if (props.interest === 5) {
+      type = "Education Loan";
+    } else if (props.interest === 14) {
+      type = "Business Loan";
+    }
+    let a = ref.data();
+    if (ref.exists()) {
+      a.transactions.push({
+        amount: parseFloat(props.amount),
+        date: new Date().toLocaleDateString(),
+        type: type,
+        status: "on_time",
+      });
+      await updateDoc(doc(db, "transactions", props.data.id), {
+        transactions: a.transactions,
+      });
+    } else {
+      ref = await setDoc(doc(db, "transactions", props.data.id), {
+        transactions: [
+          {
+            amount: parseFloat(props.amount),
+            date: new Date().toLocaleDateString(),
+            type: type,
+            status: "on_time",
+          },
+        ],
+      });
+    }
     navigate(0);
   };
   return (
@@ -236,7 +280,8 @@ const LoanRepay = () => {
                       amount={item.monthlyPayment}
                       data={data}
                       loanPeriod={item.loanPeriod}
-                      balance={item.balance}
+                      balance={data.balance}
+                      interest={item.interestRate}
                     />
                   )}
                 </>
