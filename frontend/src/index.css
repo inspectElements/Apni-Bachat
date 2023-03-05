@@ -39,6 +39,16 @@ body {
   background-attachment: fixed;
 }
 
+.admin-bg {
+  background-image: url("./assets/adminBG.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  height: 100%;
+  width: 100%;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

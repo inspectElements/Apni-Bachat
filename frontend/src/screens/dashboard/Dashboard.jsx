@@ -126,8 +126,8 @@ const Dashboard = () => {
   }
   return (
     <>
-      <div className="bg">
-        <div className="pt-10 h-[100vh]">
+      <div className="bg min-h-[100vh]">
+        <div className="pt-10">
           <div className="flex justify-between">
             <svg
               className="w-7 absolute inset-0 mt-5 ml-5"
@@ -208,10 +208,11 @@ const Dashboard = () => {
             </FormControl>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-7 mt-10">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-7 mt-10 pb-20">
             <Card title="transact" route="transact" />
             <Card title="transfer" route="transfer" />
             <Card title="loan" route="loan" />
+            <Card title="fixed deposit" route="fd" />
             <Card title="trade" route="trade" />
           </div>
         </div>

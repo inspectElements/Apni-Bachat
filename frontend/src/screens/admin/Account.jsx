@@ -1,17 +1,58 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import Sidebar from "./Sidebar";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 import { useAuth } from "@arcana/auth-react";
-
+import { Paper } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { providers, Contract } from "ethers";
-import { apniBachatConractAddress } from "../../constants";
+import { apniBachatConractAddress, ocrSpaceKey } from "../../constants";
 import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
 import { arcanaProvider } from "../../index";
 import CustomizedDialogs from "../../components/CustomizedDialogs";
 
 import axios from "axios";
+
+const Card = (props) => {
+  const navigate = useNavigate();
+return (
+  <>
+    <Paper
+      elevation={3}
+      sx={{
+        width: "90%",
+        height: "75px",
+        background:
+          "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+        border: "2px solid #000",
+        borderRadius: "13px",
+        backdropFilter: "blur(5px)",
+      }}
+    >
+      <div className="flex justify-between items-center">
+        <Typography
+          variant="h4"
+          component="h2"
+          color="primary.contrastText"
+          sx={{
+            fontSize: "1.25rem",
+            fontWeight: "bold",
+            color: "#000",
+            textAlign: "left",
+            pt: 2.5,
+            pl: 2,
+            fontFamily: "Poppins, sans-serif",
+          }}
+        >
+          {props.title}
+        </Typography>
+        {props.children}
+      </div>
+    </Paper>
+  </>
+);
+};
 
 const OcrSpaceApi = () => {
   const [data, setData] = useState("");
@@ -84,9 +125,9 @@ const RequestItem = (props) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://api.ocr.space/parse/image", {
-        apikey: "YOUR_API_KEY",
-        url: "IMAGE_URL",
+      const response = await axios.post("https://api8.ocr.space/parse/image", {
+        apikey: ocrSpaceKey,
+        url: "https://img.freepik.com/free-vector/stylish-indian-flag-design_1394-725.jpg?w=1380&t=st=1677981733~exp=1677982333~hmac=e0f4ca8468321f9b8605c163aa79a74f9224065df607a3066969c64bb3716485",
       });
       setData(response.data);
     } catch (error) {
@@ -95,6 +136,27 @@ const RequestItem = (props) => {
   };
 
   return (
+    <>
+    <Card title={props.name}>
+    <Button variant="contained" onClick={onClickApprove} sx={{
+      disableRipple: true,
+      width: "100px",
+      background:
+        "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+      height: "50px",
+      color: "#000",
+      border: "2px solid #000",
+      borderRadius: "10px",
+      fontFamily: "Poppins, sans-serif",
+      fontWeight: "bold",
+      fontSize: "1.2rem",
+      textTransform: "none",
+      marginTop: "1rem",
+      marginRight: "1rem",
+    }}>
+          Approve
+        </Button>
+    </Card>
     <div className="w-[90%] bg-white shadow-lg">
       <CustomizedDialogs
         open={modal}
@@ -141,6 +203,7 @@ const RequestItem = (props) => {
       </div>
       <div>{JSON.stringify(data)}</div>
     </div>
+    </>
   );
 };
 function Account() {
@@ -182,18 +245,37 @@ function Account() {
           <CircularProgress />
         </div>
       )}
-      <Box sx={{ display: "flex", width: "100vw", height: "100vh" }}>
+      <Box sx={{ display: "flex", width: "100vw", height: "100vh" }} className="admin-bg">
         <Sidebar />
+        <div className="flex flex-col justify-start items-start w-[70%]">
 
+        <Typography
+          variant="h4"
+          color="black"
+          sx={{
+            fontSize: "2.5rem",
+            fontWeight: "bold",
+            textAlign: "center",
+            textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
+            fontFamily: "Poppins, sans-serif",
+            letterSpacing: "0.1rem",
+            my: "5rem",
+            mb: "4rem",
+            ml: "5rem",
+          }}
+        >
+          Account KYC Requests
+        </Typography>
         <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2 overflow-y-auto">
           {(!data || data.length === 0) && (
-            <div className="w-[90%] bg-white shadow-lg p-5">
-              <h1 className="m-auto w-fit">No requests</h1>
+            <div className="w-[90%] bg-white p-5 text-2xl flex justify-start items-start">
+              <h1 className="text-left ml">No requests</h1>
             </div>
           )}
           {data?.map((item) => (
             <RequestItem approve={approve} {...item} />
           ))}
+        </div>
         </div>
       </Box>
     </>

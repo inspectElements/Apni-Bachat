@@ -11,6 +11,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import CreditScoreIcon from "@mui/icons-material/CreditScore";
+import QRCode from "qrcode.react";
 
 export default function Sidebar() {
   const routes = [
@@ -32,7 +33,39 @@ export default function Sidebar() {
     else return false;
   };
   return (
-    <div style={{ flex: 2 }}>
+    <div style={{ flex: 3 }} className="container !shadow-xl">
+      <Typography
+          variant="h4"
+          color="primary.contrastText"
+          sx={{
+            fontSize: "2.7rem",
+            fontWeight: "bold",
+            textAlign: "center",
+            mt: "10vh",
+            mb: 2.5,
+            textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
+            fontFamily: "Poppins, sans-serif",
+            letterSpacing: "0.1rem",
+          }}
+        >
+          अपनी Bachat
+        </Typography>
+        <Typography
+          variant="h6"
+          color="primary.contrastText"
+          sx={{
+            fontFamily: "Poppins, sans-serif",
+            fontSize: "0.9rem",
+            fontStyle: "italic",
+            letterSpacing: "0.1rem",
+            textAlign: "center",
+            textShadow: "0px 5px 4px rgba(0, 0, 0, 0.36)",
+            mb: 15,
+          }}
+        >
+          "Reliable and Trustworthy"
+        </Typography>
+
       <List>
         {routes.map((r) => (
           <Link to={r.path} key={r.headingText}>
@@ -41,8 +74,10 @@ export default function Sidebar() {
               disablePadding
               sx={{
                 transition: "all 0.3s",
-                bgcolor: isCurrentNavActive(r.path) ? "blue" : "initial",
-                color: isCurrentNavActive(r.path) ? "white" : "black",
+                bgcolor: isCurrentNavActive(r.path) ? "#54004C50" : "initial",
+                color: "white",
+                fontSize: "40px !important",
+
               }}
             >
               <ListItemButton sx={{ p: 2, px: 4 }}>
@@ -51,16 +86,16 @@ export default function Sidebar() {
                     transition: "all 0.3s",
                     fontSize: {
                       xl: "30px",
-                      sm: "15px",
+                      sm: "20px",
                     },
-                    color: isCurrentNavActive(r.path) ? "white" : "black",
+                    color: "white"
                   }}
                 >
                   {r.mainIcon}
                 </ListItemIcon>
                 <ListItemText
                   sx={{
-                    fontSize: "24px",
+                    fontSize: "30px",
                     fontWeight: "bold",
                   }}
                   primary={r.headingText}
@@ -77,11 +112,12 @@ export default function Sidebar() {
             alignItems: "center",
             flexDirection: "column",
             gap: 2,
-            padding: 5,
+            paddingTop: 14,
           }}
         >
-          <Typography textAlign={"center"} variant="h5">
-            See the transactions of our contract
+          <QRCode value={`https://mumbai.polygonscan.com/`} />
+          <Typography textAlign={"center"} variant="h6" color="white">
+            Check Contract Transaction History
           </Typography>
         </Box>
       </List>
