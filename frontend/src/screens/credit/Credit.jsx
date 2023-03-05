@@ -165,15 +165,14 @@ const Credit = () => {
   } 
   else if (kyc === undefined) {
     return (
-      <div className="w-screen h-screen flex justify-center items-center text-2xl bg font-bold">
+      <div className="w-screen h-screen flex justify-center items-center text-2xl bg  font-bold">
         <CircularProgress />
       </div>
     );
   }
   return (
     <>
-      <div className="bg">
-        <div className="pt-10 h-[100vh]">
+      <div className="bg min-h-[100vh] py-10">
           <div className="flex justify-between">
             <svg
               className="w-7 absolute inset-0 mt-5 ml-5"
@@ -254,13 +253,12 @@ const Credit = () => {
             </FormControl>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-7 pt-10 pb-10">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-7 py-10">
             <Score title="credibility score" />
             <Card title="check payments" route="payments" />
             <Card title="account age" route="age" />
             <Card title="my accounts" route="accounts" />
           </div>
-        </div>
       </div>
     </>
   );
