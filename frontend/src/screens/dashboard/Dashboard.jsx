@@ -158,7 +158,7 @@ const Dashboard = () => {
               letterSpacing: "0.1rem",
             }}
           >
-            {t("hi")}, Eshan
+            {t("hi")}, {auth?.user?.name.split(" ")[0]}
           </Typography>
           <p
             style={{

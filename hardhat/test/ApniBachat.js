@@ -132,4 +132,17 @@ describe("ApniBachat", () => {
       .calculateCreditScore(financialData.personalInformation.panNumber);
     console.log(cred);
   });
+
+  // i start fixed deposit
+
+  it("Start Fixed Deposit", async () => {
+    await apniBachat
+      .connect(account1)
+      .startFixedDeposit(
+        financialData.personalInformation.panNumber,
+        ethers.utils.parseEther("100"),
+        1,
+        8
+      );
+  });
 });

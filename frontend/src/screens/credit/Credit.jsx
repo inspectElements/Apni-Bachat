@@ -105,14 +105,22 @@ const Score = (props) => {
               {parsedCreditScore}
             </Typography>
           )} */}
-          <CreditMeter creditScore={parsedCreditScore} style="height: 100px !important"/>
-          <Button onClick={fetchCreditScore} sx={{
-            fontSize: "1rem",
-            fontWeight: "bold",
-            color: "black",
-            textAlign: "left",
-            transform: "translateY(-25%)",
-          }}>Update Score</Button>
+          <CreditMeter
+            creditScore={parsedCreditScore}
+            style="height: 100px !important"
+          />
+          <Button
+            onClick={fetchCreditScore}
+            sx={{
+              fontSize: "1rem",
+              fontWeight: "bold",
+              color: "black",
+              textAlign: "left",
+              transform: "translateY(-25%)",
+            }}
+          >
+            Update Score
+          </Button>
         </div>
       </Paper>
     </>
@@ -262,7 +270,7 @@ const Credit = () => {
             letterSpacing: "0.1rem",
           }}
         >
-          {t("hi")}, Eshan
+          {t("hi")}, {auth?.user?.name.split(" ")[0]}
         </Typography>
         <p
           style={{
@@ -313,7 +321,7 @@ const Credit = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-7 py-10">
-          <Score title="credibility score" panCard={panCard}/>
+          <Score title="credibility score" panCard={panCard} />
           <Card title="check payments" route="payments" />
           <Card title="account age" route="age" />
           <Card title="my accounts" route="accounts" />

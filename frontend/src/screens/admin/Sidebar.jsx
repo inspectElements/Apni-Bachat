@@ -16,12 +16,12 @@ import QRCode from "qrcode.react";
 export default function Sidebar() {
   const routes = [
     {
-      headingText: "Approve account",
+      headingText: "Approve Account",
       path: "/admin/approve-account",
       mainIcon: <PersonIcon fontSize="large" />,
     },
     {
-      headingText: "Approve loan",
+      headingText: "Approve Loan",
       path: "/admin/approve-loan",
       mainIcon: <CreditScoreIcon fontSize="large" />,
     },
