@@ -387,7 +387,7 @@ function Account() {
           </Typography>
           <div className="flex-[8] flex w-full justify-start items-center flex-col gap-4 pt-2 overflow-y-auto">
             {(!data || data.length === 0) && (
-              <div className="w-[90%] bg-white p-5 text-2xl flex justify-start items-start">
+              <div className="w-[90%] p-5 text-2xl flex justify-start items-start">
                 <h1 className="text-left ml">No requests</h1>
               </div>
             )}
