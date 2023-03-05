@@ -6,7 +6,7 @@ import { db } from "../../configs/firebase";
 import { useAuth } from "@arcana/auth-react";
 
 import { providers, Contract } from "ethers";
-import { apniBachatConractAddress } from "../../constants";
+import { apniBachatConractAddress, ocrSpaceKey } from "../../constants";
 import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
 import { arcanaProvider } from "../../index";
 import CustomizedDialogs from "../../components/CustomizedDialogs";
@@ -84,9 +84,9 @@ const RequestItem = (props) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://api.ocr.space/parse/image", {
-        apikey: "YOUR_API_KEY",
-        url: "IMAGE_URL",
+      const response = await axios.post("https://api8.ocr.space/parse/image", {
+        apikey: ocrSpaceKey,
+        url: "https://img.freepik.com/free-vector/stylish-indian-flag-design_1394-725.jpg?w=1380&t=st=1677981733~exp=1677982333~hmac=e0f4ca8468321f9b8605c163aa79a74f9224065df607a3066969c64bb3716485",
       });
       setData(response.data);
     } catch (error) {
