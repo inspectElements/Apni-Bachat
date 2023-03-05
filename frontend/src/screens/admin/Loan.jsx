@@ -12,6 +12,7 @@ import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/Cre
 import { arcanaProvider } from "../../index";
 import { providers, Contract } from "ethers";
 import { useNavigate } from "react-router-dom";
+import OverlayMob from "../../components/OverlayMob";
 
 const Card = (props) => {
   const navigate = useNavigate();
@@ -262,6 +263,9 @@ function Loan() {
       console.log("Document successfully updated!");
     });
   };
+  if (window.innerWidth < 600) {
+    return <OverlayMob />;
+  }
   return (
     <>
       <Box sx={{ display: "flex", width: "100vw", height: "100vh", borderRadius: "10px !important" }} className="admin-bg">
