@@ -12,9 +12,9 @@ import { Button } from "@mui/material";
 
 const financialData = {
   personalInformation: {
-    name: "Vijay Malaya",
+    name: "Eshan Trivedi",
     dateOfBirth: "04/03/1970",
-    panNumber: "VIJAY12345",
+    panNumber: "ESHAN12345",
   },
   loanDeets: {
     loanType: "Personal Loan",

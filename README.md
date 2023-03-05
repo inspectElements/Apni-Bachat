@@ -29,7 +29,7 @@ regulations, particularly regarding money laundering and know-yourcustomer (KYC
 
 ## Proposed Solution
 
-We pressent you Apni Bachat 
+We pressent you Apni Bachat
 Apni Bachat is a Decentralized bank that replaces your current banks with a smart contract deployed on testnet cello as well as polygon.
 Apni Bachat act as a mordern yet simple interface that connects your user and financial ecosystem in one streamlined flow with a very intutive user interface.
 Our app helps a user to transfer, transact money and ask for loans in a transparent and inclusive way.
@@ -37,8 +37,7 @@ Apni Bachat used credit score in order to lend loans to its user, The credit sco
 
 And thats how the flow of our app works.
 
-
-## Features of Proposed Solution 
+## Features of Proposed Solution
 
 - Likey reducing rate of frauds
 - Credibility Check
@@ -47,15 +46,21 @@ And thats how the flow of our app works.
 - personlised Chatbot
 
 ## Screenshots
+
 ![final-landing-apni-bachat](https://user-images.githubusercontent.com/96841396/222943997-058a414b-6d5a-434d-99b9-c414ed15d577.png)
 
 ![image 4](https://user-images.githubusercontent.com/96841396/222944118-964d7da9-215b-423b-b265-5718d814bbf9.png)
 ![image 6](https://user-images.githubusercontent.com/96841396/222944212-d91259aa-2233-4180-af1b-6d27ec765c80.png)
 ![image 13](https://user-images.githubusercontent.com/96841396/222944235-7322ee62-4c3f-46ea-a3c6-264f51da7424.png)
 
+## Deployed Contract Addresses
 
+### Celo
 
-
+```
+CredibilityScore deployed to: 0xff98AaD3673dd1Dd17E9e2c93ba1af0CCE489fd9
+ApniBachat deployed to: 0x7245dA6074F2FcE3930D57F6326A69a249361d7a
+```
 
 ## Team Members
 
