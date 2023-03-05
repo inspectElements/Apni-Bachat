@@ -16,10 +16,31 @@ import { db } from "../../configs/firebase";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useTranslation } from "react-i18next";
 import CreditMeter from "./CreditMeter";
+import { providers, Contract } from "ethers";
 
 const Score = (props) => {
   const navigate = useNavigate();
+  const provider = new providers.Web3Provider(arcanaProvider.provider);
+  // get the end user
+  const signer = provider.getSigner();
+  // get the smart contract
+  const contract = new Contract(
+    credibilityScoreConractAddress,
+    CredibilityScore.abi,
+    signer
+  );
   const { t, i18n } = useTranslation();
+  const [panCard, setPanCard] = useState("");
+  const [parsedCreditScore, setParsedCreditScore] = React.useState(null);
+  const fetchCreditScore = async () => {
+    console.log("approve", panCard);
+
+    if (!panCard?.length > 0) return;
+
+    const creditScore = await contract.calculateCreditScore(panCard);
+    const _parsedCreditScore = parseInt(creditScore._hex.substring(2), 16);
+    setParsedCreditScore(_parsedCreditScore);
+  };
   useEffect(() => {
     i18n.changeLanguage("en");
   }, []);
@@ -54,7 +75,20 @@ const Score = (props) => {
           >
             {t(props.title)}
           </Typography>
-          <CreditMeter creditScore="500" style="height: 100px !important"/>
+          <img src={`/meter${getScore(parsedCreditScore)}.png`} alt="meter" />
+          {parsedCreditScore !== null && (
+            <Typography
+              id="modal-modal-title"
+              variant="h2"
+              component="h2"
+              className="text-center"
+              style={{ position: "absolute", top: "40%", left: "38%" }}
+            >
+              {parsedCreditScore}
+            </Typography>
+          )}
+          <Button onClick={fetchCreditScore}>Fetch Credibility Score</Button>
+          {/* <CreditMeter creditScore="500" style="height: 100px !important"/> */}
         </div>
       </Paper>
     </>
@@ -165,15 +199,14 @@ const Credit = () => {
   } 
   else if (kyc === undefined) {
     return (
-      <div className="w-screen h-screen flex justify-center items-center text-2xl bg font-bold">
+      <div className="w-screen h-screen flex justify-center items-center text-2xl bg  font-bold">
         <CircularProgress />
       </div>
     );
   }
   return (
     <>
-      <div className="bg">
-        <div className="pt-10 h-[100vh]">
+      <div className="bg min-h-[100vh] py-10">
           <div className="flex justify-between">
             <svg
               className="w-7 absolute inset-0 mt-5 ml-5"
@@ -254,13 +287,14 @@ const Credit = () => {
             </FormControl>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-7 pt-10 pb-10">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-7 py-10">
             <Score title="credibility score" />
             <Card title="check payments" route="payments" />
             <Card title="account age" route="age" />
             <Card title="my accounts" route="accounts" />
+            <Card title="credits used" route="" />
+            <Card title="enquiry" route="" />
           </div>
-        </div>
       </div>
     </>
   );

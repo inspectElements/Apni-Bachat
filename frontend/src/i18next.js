@@ -13,6 +13,8 @@ const resources = {
       "check payments": "Check Payments",
       "my accounts": "My Accounts",
       "account age": "Account Age",
+      "credits used": "Credits Used",
+      "enquiry": "Enquiry",
     },
   },
   hi: {
@@ -27,6 +29,8 @@ const resources = {
       "check payments": "भुगतान जांचें",
       "my accounts": "मेरे खाते",
       "account age": "खाते की उम्र",
+      "credits used": "क्रेडिट उपयोग ",
+      "enquiry": "जांच",
     },
   },
 };
