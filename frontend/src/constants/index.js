@@ -1,4 +1,5 @@
 export const credibilityScoreConractAddress =
-  "0x3B80fa2DB1D4B9fdd2DdaDb36F8C8E67dF77790d";
+  "0x7245dA6074F2FcE3930D57F6326A69a249361d7a";
 export const apniBachatConractAddress =
-  "0x31c4f8626f9dd04Db25e629a954E3cF4541d5956";
+  "0x62eeAaEFd07804ECf42096fB7E7280C8b711c531";
+export const ocrSpaceKey = "K85174158588957";

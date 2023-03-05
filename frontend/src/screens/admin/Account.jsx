@@ -11,6 +11,35 @@ import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json
 import { arcanaProvider } from "../../index";
 import CustomizedDialogs from "../../components/CustomizedDialogs";
 
+import axios from "axios";
+
+const OcrSpaceApi = () => {
+  const [data, setData] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("https://api.ocr.space/parse/image", {
+        apikey: "YOUR_API_KEY",
+        url: "IMAGE_URL",
+      });
+      setData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <button type="submit">Send Request</button>
+      </form>
+      <div>{JSON.stringify(data)}</div>
+    </div>
+  );
+};
+
 const RequestItem = (props) => {
   const provider = new providers.Web3Provider(arcanaProvider.provider);
   // get the end user
@@ -21,6 +50,8 @@ const RequestItem = (props) => {
     ApniBachat.abi,
     signer
   );
+
+  const [data, setData] = useState("");
 
   const [modal, setModal] = useState(false);
   const [stepCount, setStepCount] = useState(0);
@@ -47,6 +78,20 @@ const RequestItem = (props) => {
     props.approve(props.id);
 
     setStepCount((prev) => prev + 1);
+  };
+
+  const onClickOcr = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("https://api.ocr.space/parse/image", {
+        apikey: "YOUR_API_KEY",
+        url: "IMAGE_URL",
+      });
+      setData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -90,7 +135,11 @@ const RequestItem = (props) => {
         <Button variant="contained" onClick={onClickApprove} className="h-12">
           Approve
         </Button>
+        <Button variant="contained" onClick={onClickOcr} className="h-12">
+          ocr
+        </Button>
       </div>
+      <div>{JSON.stringify(data)}</div>
     </div>
   );
 };
