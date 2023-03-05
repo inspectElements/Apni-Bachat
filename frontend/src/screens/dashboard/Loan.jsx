@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, Button, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Overlay from '../../components/Overlay';
 
 const Card = (props) => {
   const navigate = useNavigate();
@@ -56,6 +57,9 @@ const Card = (props) => {
 
 const Loan = () => {
   const navigate = useNavigate();
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
     <div className="bg">

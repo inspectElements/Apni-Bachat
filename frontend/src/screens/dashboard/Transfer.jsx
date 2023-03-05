@@ -1,13 +1,7 @@
 import React from "react";
 import { Typography, TextField, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-import {
-  apniBachatConractAddress,
-  credibilityScoreConractAddress,
-} from "../../constants";
-import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
-import CredibilityScore from "../../artifacts/contracts/CredibilityScore.sol/CredibilityScore.json";
+import Overlay from "../../components/Overlay";
 import { arcanaProvider } from "../../index";
 import { providers, Contract, utils } from "ethers";
 import { useAuth } from "@arcana/auth-react";
@@ -78,7 +72,9 @@ const Transfer = () => {
       // navigate(0);
     });
   };
-
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
       <div className="bg min-h-[100vh]">

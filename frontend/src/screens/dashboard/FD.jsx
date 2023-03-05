@@ -16,7 +16,7 @@ import { storage, db } from "../../configs/firebase";
 import { collection, doc, updateDoc, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import uuid from "react-uuid";
-
+import Overlay from "../../components/Overlay";
 import {
   apniBachatConractAddress,
   credibilityScoreConractAddress,
@@ -155,6 +155,9 @@ const FD = () => {
       navigate(0);
     }
   };
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
       {loading && (

@@ -16,6 +16,7 @@ import { storage, db } from "../../configs/firebase";
 import { collection, doc, updateDoc, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import uuid from "react-uuid";
+import Overlay from "../../components/Overlay";
 
 function calculateEMI(principal, interestRate, loanPeriod) {
   // Convert interest rate from percentage to decimal
@@ -121,6 +122,9 @@ const LoanApply = () => {
       navigate("/dashboard/loan/status");
     }
   };
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
       {loading && (

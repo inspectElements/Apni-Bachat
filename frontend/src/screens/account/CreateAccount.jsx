@@ -7,6 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import uuid from "react-uuid";
 import DoneIcon from "@mui/icons-material/Done";
 import { useNavigate } from "react-router-dom";
+import Overlay from "../../components/Overlay";
 
 const CreateAccount = () => {
   const navigate = useNavigate();
@@ -86,7 +87,9 @@ const CreateAccount = () => {
       navigate("/home");
     }
   };
-
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
       {loading && (

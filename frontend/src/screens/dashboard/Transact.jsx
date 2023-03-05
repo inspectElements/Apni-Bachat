@@ -9,7 +9,7 @@ import {
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../configs/firebase";
 import { useAuth } from "@arcana/auth-react";
-
+import Overlay from "../../components/Overlay";
 import { providers, Contract, utils } from "ethers";
 import { apniBachatConractAddress } from "../../constants";
 import ApniBachat from "../../artifacts/contracts/ApniBachat.sol/ApniBachat.json";
@@ -172,6 +172,9 @@ const Transact = () => {
     navigate(0);
   };
   console.log(data);
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
       <CustomizedDialogs

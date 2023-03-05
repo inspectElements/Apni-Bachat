@@ -14,6 +14,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { useNavigate } from "react-router-dom";
 import Bharti from "../../assets/bharti.png";
 import ChatBot from "react-simple-chatbot";
+import Overlay from "../../components/Overlay";
 // import apiPost from "../utilities/apiCall";
 
 const UserMessage = (props) => {
@@ -103,7 +104,9 @@ const steps = [
 
 const Chat = () => {
   const navigate = useNavigate();
-
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <div className="chatbot-container__p">
       <ThemeProvider

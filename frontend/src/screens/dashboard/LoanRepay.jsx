@@ -11,7 +11,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import DoneIcon from "@mui/icons-material/Done";
+import Overlay from "../../components/Overlay";
 import { useAuth } from "@arcana/auth-react";
 import { db } from "../../configs/firebase";
 import {
@@ -226,6 +226,9 @@ const LoanRepay = () => {
     if (!data) return;
     setLoading(false);
   }, [data]);
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
       {loading && (

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, TextField, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Overlay from "../../components/Overlay";
 
 const Card = (props) => {
   const navigate = useNavigate();
@@ -44,6 +45,9 @@ const Card = (props) => {
 
 const Age = () => {
   const navigate = useNavigate();
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
       <div className="bg min-h-[100vh]">

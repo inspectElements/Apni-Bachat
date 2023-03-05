@@ -16,7 +16,7 @@ import { db } from "../../configs/firebase";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useTranslation } from "react-i18next";
 import CreditMeter from "./CreditMeter";
-
+import Overlay from "../../components/Overlay";
 import {
   apniBachatConractAddress,
   credibilityScoreConractAddress,
@@ -224,6 +224,9 @@ const Credit = () => {
     }
   }, [data]);
   console.log(kyc);
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   if (kyc === false) {
     return (
       <div className="w-screen h-screen flex justify-center items-center text-2xl bg font-bold">

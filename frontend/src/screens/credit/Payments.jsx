@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Typography, TextField, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { utils } from "ethers";
+import Overlay from "../../components/Overlay";
 import { useAuth } from "@arcana/auth-react";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "../../configs/firebase";
@@ -174,6 +175,9 @@ const Payments = () => {
       });
     }
   }, [data]);
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
       <div className="bg min-h-[100vh]">

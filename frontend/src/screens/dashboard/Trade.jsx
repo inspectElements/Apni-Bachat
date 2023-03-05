@@ -10,6 +10,7 @@ import {
   Input,
   Paper
 } from "@mui/material";
+import Overlay from "../../components/Overlay";
 import { useNavigate } from "react-router-dom";
 
 function calculateTransit (amount, rate) {
@@ -70,6 +71,9 @@ const Trade = () => {
         )
       );
   }, [amount, rate]);
+  if (window.innerWidth > 600) {
+    return <Overlay />;
+  }
   return (
     <>
     <div className="bg min-h-[100vh]">
