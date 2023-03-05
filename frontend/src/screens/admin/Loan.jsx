@@ -237,6 +237,9 @@ function Loan() {
       >
         <Box sx={style} className="relative">
           <img src="/tick.final.gif"/>
+          <h2 className="text-center font-bold my-3">
+            Contract has accepted the loan
+          </h2>
           <div className="w-full flex justify-center items-start">
             <Button onClick={handleCloseAccept} variant="outlined" fullWidth>
               OK
