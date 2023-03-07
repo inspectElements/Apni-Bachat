@@ -63,10 +63,10 @@ ApniBachat deployed to: 0x7245dA6074F2FcE3930D57F6326A69a249361d7a
 
 ## Team Members
 
-- Hussain Pettiwala
-- Eshan Trivedi
-- Aryan Parmar
-- Kunal Chaturvedi
+- [Hussain Pettiwala](https://github.com/pettiboy)
+- [Eshan Trivedi](https://github.com/EshanTrivedi21)
+- [Aryan Parmar](https://github.com/aryan-parmar)
+- [Kunal Chaturvedi](https://github.com/KCmean)
 
 ## License
 
