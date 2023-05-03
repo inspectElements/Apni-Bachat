@@ -1,7 +1,5 @@
 # Apni Bachat
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-
 ## Problem Overview
 
 The current financial ecosystem is centralized, and traditional financial
@@ -25,7 +23,7 @@ needs to be scalable, as it will need to handle a large number of users
 and transactions. Thirdly, the platform needs to have a user-friendly
 interface, so that users can easily navigate and utilize the platform's
 features. Finally, the platform needs to be compliant with relevant
-regulations, particularly regarding money laundering and know-yourcustomer (KYC) requirements.
+regulations, particularly regarding money laundering and know-your-customer (KYC) requirements.
 
 ## Proposed Solution
 
@@ -65,10 +63,10 @@ ApniBachat deployed to: 0x7245dA6074F2FcE3930D57F6326A69a249361d7a
 
 ## Team Members
 
-- Hussain Pettiwala
-- Eshan Trivedi
-- Aryan Parmar
-- Kunal Chaturvedi
+- [Hussain Pettiwala](https://github.com/pettiboy)
+- [Eshan Trivedi](https://github.com/EshanTrivedi21)
+- [Aryan Parmar](https://github.com/aryan-parmar)
+- [Kunal Chaturvedi](https://github.com/KCmean)
 
 ## License
 
