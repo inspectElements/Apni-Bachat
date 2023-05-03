@@ -147,6 +147,6 @@ describe("CredibilityScore", function () {
       .connect(authorized)
       .calculateCreditScore(pan);
 
-    console.log(creditScore);
+    // console.log(creditScore);
   });
 });

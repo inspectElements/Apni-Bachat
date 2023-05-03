@@ -37,7 +37,7 @@ describe("ApniBachat", () => {
     const ApniBachat = await ethers.getContractFactory(
       "contracts/ApniBachat.sol:ApniBachat"
     );
-    console.log(credibilityScore.address);
+    // console.log(credibilityScore.address);
     apniBachat = await ApniBachat.deploy(credibilityScore.address);
     await apniBachat.deployed();
 
@@ -62,7 +62,7 @@ describe("ApniBachat", () => {
     const cred = await credibilityScore
       .connect(account1)
       .calculateCreditScore(financialData.personalInformation.panNumber);
-    console.log(cred);
+    // console.log(cred);
   });
 
   it("Deposit", async () => {
@@ -130,7 +130,7 @@ describe("ApniBachat", () => {
     const cred = await credibilityScore
       .connect(account1)
       .calculateCreditScore(financialData.personalInformation.panNumber);
-    console.log(cred);
+    // console.log(cred);
   });
 
   // i start fixed deposit
