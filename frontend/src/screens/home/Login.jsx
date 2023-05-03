@@ -7,12 +7,20 @@ const Login = () => {
   const auth = useAuth();
   useEffect(() => {
     if (auth.isLoggedIn) {
-      navigate("/create");
+      // navigate("/create");
     }
   }, [auth]);
   return (
     <div className="bg min-h-screen">
-      <h1 style={{ textAlign: "center", paddingTop: "100px", paddingBottom: "50px", fontSize: "1.75rem", fontWeight: "bold" }}>
+      <h1
+        style={{
+          textAlign: "center",
+          paddingTop: "100px",
+          paddingBottom: "50px",
+          fontSize: "1.75rem",
+          fontWeight: "bold",
+        }}
+      >
         अपनी Bachat
       </h1>
       <div>

@@ -211,7 +211,7 @@ const LoanRepay = () => {
             Check your Loan Application Status
           </p>
         </div>
-        <div className="flex flex-col gap-5 justify-center items-center">
+        <div className="flex flex-col gap-5 justify-center items-center pb-24">
           {data?.loan?.map((item, index) => (
             <Card
               title={`Loan ${index + 1}`}

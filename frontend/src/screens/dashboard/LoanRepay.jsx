@@ -156,7 +156,7 @@ const Card = (props) => {
                 fontFamily: "Poppins, sans-serif",
               }}
             >
-              id: {props.title}
+              Loan ID: {props.title}
             </Typography>
             <Typography
               variant="h4"
@@ -167,31 +167,38 @@ const Card = (props) => {
                 color: "black",
                 textAlign: "center",
                 fontFamily: "Poppins, sans-serif",
+                marginTop: "0.5rem",
               }}
             >
               due for: {month[3 + props.loanPeriod - props.due]}
             </Typography>
           </div>
         </div>
-        <Button
-          variant="contained"
-          sx={{
-            disableRipple: true,
-            width: "auto",
-            background:
-              "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
-            color: "#000",
-            border: "2px solid #000",
-            borderRadius: "10px",
-            fontFamily: "Poppins, sans-serif",
-            fontWeight: "bold",
-            fontSize: "1.2rem",
-            textTransform: "none",
-          }}
-          onClick={() => pay(props.amount)}
-        >
-          {props.amount.toString().slice(0, 10)}
-        </Button>
+
+        <div className="flex align-middle justify-between mt-5">
+          <Typography sx={{ fontSize: "1.2rem", fontWeight: "bold", mt: 1 }}>
+            {props.amount.toString().slice(0, 10)} Matic
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{
+              disableRipple: true,
+              width: "auto",
+              background:
+                "linear-gradient(91.47deg, rgba(201, 72, 247, 0.39) 0.58%, rgba(143, 0, 167, 0.39) 95.65%)",
+              color: "#000",
+              border: "2px solid #000",
+              borderRadius: "10px",
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: "bold",
+              fontSize: "1.2rem",
+              textTransform: "none",
+            }}
+            onClick={() => pay(props.amount)}
+          >
+            Pay Now
+          </Button>
+        </div>
       </Paper>
     </>
   );

@@ -8,13 +8,16 @@ import {
   FormControl,
   InputLabel,
   Input,
-  Paper
+  Paper,
 } from "@mui/material";
 import Overlay from "../../components/Overlay";
 import { useNavigate } from "react-router-dom";
+import { arcanaProvider } from "../..";
+import { providers, Contract, utils } from "ethers";
+import { useAuth } from "@arcana/auth-react";
 
-function calculateTransit (amount, rate) {
-  return (amount * rate);
+function calculateTransit(amount, rate) {
+  return amount * rate;
 }
 
 const Card = (props) => {
@@ -58,61 +61,80 @@ const Card = (props) => {
 
 const Trade = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
+
   const [amount, setAmount] = React.useState(0);
   const [rate, setRate] = React.useState(0);
   const [transit, setTransit] = React.useState(0);
   useEffect(() => {
     setTransit(
-        parseFloat(
-          calculateTransit(
-            parseFloat(amount),
-            parseFloat(rate),
-          )
-        )
-      );
+      parseFloat(calculateTransit(parseFloat(amount), parseFloat(rate)))
+    );
   }, [amount, rate]);
+
+  const onClickTrade = () => {
+    const provider = new providers.Web3Provider(arcanaProvider.provider);
+    // get the end user
+    const signer = provider.getSigner();
+
+    const tx = {
+      from: auth.user.address,
+      to: auth.user.address,
+      value: utils.parseEther(amount),
+      nonce: provider.getTransactionCount(auth.user.address, "latest"),
+      gasLimit: utils.hexlify(100000),
+      gasPrice: provider.getGasPrice(),
+    };
+
+    signer.sendTransaction(tx).then((transaction) => {
+      console.dir(transaction);
+      // setSendAccount("");
+      // setSendTokenAmount("");
+      // navigate(0);
+    });
+  };
+
   if (window.innerWidth > 600) {
     return <Overlay />;
   }
   return (
     <>
-    <div className="bg min-h-[100vh]">
-      <div className="pt-20 pb-14">
-        <div className="absolute inset-0 mt-5 ml-5">
-          <svg
-            className="w-7"
-            fill="#000"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 448 512"
-            onClick={() => navigate("/dashboard")}
+      <div className="bg min-h-[100vh]">
+        <div className="pt-20 pb-14">
+          <div className="absolute inset-0 mt-5 ml-5">
+            <svg
+              className="w-7"
+              fill="#000"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"
+              onClick={() => navigate("/dashboard")}
+            >
+              <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+            </svg>
+          </div>
+          <Typography
+            variant="h4"
+            sx={{
+              fontSize: "1.95rem",
+              fontWeight: "bold",
+              color: "#000",
+              textAlign: "center",
+              pt: { mobile: 15, tablet: 5, laptop: 5 },
+              mb: 1,
+              fontFamily: "Poppins, sans-serif",
+            }}
           >
-            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
-          </svg>
-          
+            Trade
+          </Typography>
+          <p
+            style={{
+              textAlign: "center",
+            }}
+          >
+            Trade Tokens Now
+          </p>
         </div>
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: "1.95rem",
-            fontWeight: "bold",
-            color: "#000",
-            textAlign: "center",
-            pt: { mobile: 15, tablet: 5, laptop: 5 },
-            mb: 1,
-            fontFamily: "Poppins, sans-serif",
-          }}
-        >
-          Trade
-        </Typography>
-        <p
-          style={{
-            textAlign: "center",
-          }}
-        >
-          Trade Tokens Now
-        </p>
-      </div>
-      <div className="flex flex-col gap-5 justify-center items-center">
+        <div className="flex flex-col gap-5 justify-center items-center">
           <Card title="Swap Token">
             <TextField
               label="Amount"
@@ -139,7 +161,7 @@ const Trade = () => {
               label="Matic"
               disabled
               variant="outlined"
-              sx={{ width: "95%", margin: "2rem"}}
+              sx={{ width: "95%", margin: "2rem" }}
               value={transit}
             />
             <Button
@@ -160,13 +182,13 @@ const Trade = () => {
                 marginTop: "1rem",
                 backdropFilter: "blur(5px)",
               }}
-              onClick={() => navigate(`/dashboard`)}
+              onClick={onClickTrade}
             >
               Convert
             </Button>
           </Card>
         </div>
-    </div>
+      </div>
     </>
   );
 };

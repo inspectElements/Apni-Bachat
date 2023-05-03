@@ -148,7 +148,7 @@ const Transfer = () => {
               }}
               onClick={onClickDeposit}
             >
-              Deposit
+              Transfer
             </Button>
           </Card>
         </div>

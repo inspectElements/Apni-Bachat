@@ -11,15 +11,14 @@ import { ProvideAuth } from "@arcana/auth-react";
 
 const appID = "xar_test_7eefd798acaca9ed7eaa2a8be620ea5baaccdedd";
 export const arcanaProvider = new AuthProvider(appID, {
-  network: "testnet", //defaults to 'testnet'
+  // network: "testnet", //defaults to 'testnet'
   position: "right", //defaults to right
   theme: "light", //defaults to dark
   alwaysVisible: true, //defaults to true which is Full UI mode
   chainConfig: {
-    // chainId: "0xAEF3" || 44787, //defaults to CHAIN.ETHEREUM_MAINNET
-    // rpcUrl: "https://alfajores-forno.celo-testnet.org/", //defaults to 'https://rpc.ankr.com/eth'
-    chainId: CHAIN.POLYGON_MUMBAI_TESTNET, //defaults to CHAIN.ETHEREUM_MAINNET
-    rpcUrl: "https://polygon-rpc.com", //defaults to 'https://rpc.ankr.com/eth'
+    chainId: CHAIN.POLYGON_MUMBAI_TESTNET,
+    rpcUrl:
+      "https://polygon-mumbai.g.alchemy.com/v2/Jc5hFtjDtHwMlxgmbM871Mi7qB_JD8af",
   },
 });
 
